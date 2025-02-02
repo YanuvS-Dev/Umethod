@@ -26,8 +26,7 @@ library(Umethod)
 ## FindUniqueMarkers algorithm
 
 <figure>
-<img src="C:/Migration/R%20projects/Umethod/UmethodImage.png"
-style="width:30.0%"
+<img src="images/UmethodImage.png" style="width:30.0%"
 alt="process: Scoring each gene for each cluster, then testing for significant markers" />
 <figcaption aria-hidden="true">process: Scoring each gene for each
 cluster, then testing for significant markers</figcaption>
