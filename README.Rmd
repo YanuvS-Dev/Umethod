@@ -44,14 +44,13 @@ seurat_Full <- readRDS("C:\\Migration\\R projects\\Umethod\\ColonSinglecellDataL
 
 # Apply Umethod functions, if there are small/mixed clusters, their name should be added to smallcluster variable to omit them.
 # The progress bar prints weird massages, in this rmd file I suppress it
-genes_list <- suppressMessages(suppressWarnings(
-  capture.output(FindUniqueMarkers(
+genes_list <- FindUniqueMarkers(
     obj = seurat_Full,
     group_by = "Celltype",
     method = "none",
-    smallcluster = c("CAFelse", "SmallElse")
-  ), file = NULL)
-))
+    smallcluster = c("CAFelse", "SmallElse"),
+    progresstext = F)
+
 # gene_list is the marker list ordered by score and cluster
 head(genes_list)
 

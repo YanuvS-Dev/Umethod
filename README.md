@@ -3,9 +3,9 @@
 **Umethod** is an R package designed for identifying unique markers in
 single-cell data sets, Use the FindUniqueMarkers function on a Seurat
 object after clustering to get the most unique markers for your
-clusters. CreateImageData can be used with u markers (or any else) for
-each cluster for downstream analysis, visualizing the markers on Visium
-HD spatial data.
+clusters. CreateImageData function can be used with U markers (or any
+other markers) for each cluster for downstream analysis, visualizing the
+markers on Visium HD spatial data.
 
 ## 🚀 Installation
 
@@ -43,55 +43,56 @@ landscape of colorectal cancer.”*.
     library("scCustomize")
     library(cowplot)
     library(ggplot2)
+    library(svMisc)
 
     # Load the published data set (replace with the actual data loading code)
     seurat_Full <- readRDS("C:\\Migration\\R projects\\Umethod\\ColonSinglecellDataLeesUmethod.rds")
 
     # Apply Umethod functions, if there are small/mixed clusters, their name should be added to smallcluster variable to omit them.
-    # If the clusters are characters and not numbers, add matchnames = F
-    genes_list <- FindUniqueMarkers(obj = seurat_Full,group_by = "Celltype",p.threshold = 0.2,
-                                    varfeatures = row.names(seurat_Full),method = "none",
-                                    smallcluster = c("CAFelse","SmallElse"),matchnames = F)
+    # The progress bar prints weird massages, in this rmd file I suppress it
+    genes_list <- FindUniqueMarkers(
+        obj = seurat_Full,
+        group_by = "Celltype",
+        method = "none",
+        smallcluster = c("CAFelse", "SmallElse"),
+        progresstext = F)
 
     # gene_list is the marker list ordered by score and cluster
     head(genes_list)
 
-    ##        Gene Cluster    Uscore       Dev adj.p.value      P_in      P_out
-    ## CD3D   CD3D T.cells 0.6349011 0.7446679           0 0.8525962 0.10792829
-    ## CD7     CD7 T.cells 0.4849726 0.6584087           0 0.7365828 0.07817409
-    ## CD3E   CD3E T.cells 0.4831791 0.6721255           0 0.7188822 0.04675661
-    ## CD2     CD2 T.cells 0.4235852 0.6297494           0 0.6726250 0.04287562
-    ## TRBC2 TRBC2 T.cells 0.3110121 0.4530474           0 0.6864891 0.23344164
-    ## TRAC   TRAC T.cells 0.3107209 0.3951106           0 0.7864150 0.39130435
+    ##            Gene Cluster    Uscore  adj.p.value      P_in     P_out
+    ## S100P     S100P  Cancer 0.5768754 4.122014e-07 0.8216011 0.2447257
+    ## LCN2       LCN2  Cancer 0.4925141 1.169598e-05 0.7696112 0.2770971
+    ## ASCL2     ASCL2  Cancer 0.4617432 3.525535e-05 0.5739015 0.1121583
+    ## CEACAM6 CEACAM6  Cancer 0.4576173 4.068412e-05 0.7196342 0.2620170
+    ## ANXA3     ANXA3  Cancer 0.4400294 7.398427e-05 0.6360709 0.1960415
+    ## SCD         SCD  Cancer 0.4278370 1.106696e-04 0.5943754 0.1665384
 
     # Choose thresholds 
-    u.threshold <- 0.1
-    MinDEVthresh <- 0.2
-    P_out <- 0.3
+    Uscore <- 0.25
+    p_in <- 0.4
+    p_out <- 0.3
 
     # Pulling the top 5 markers and the name of the top U marker for each cluster
-    genesetshort <- unlist(sapply(split(
-      genes_list[genes_list$adj.p.value < u.threshold & genes_list$Dev > MinDEVthresh & genes_list$P_out < P_out,],genes_list[genes_list$adj.p.value < u.threshold & genes_list$Dev > MinDEVthresh& genes_list$P_out < P_out,]$Cluster),
-      function(x){x[[1]][1]}))
 
-    genesetlong <- unique(unlist(sapply(split(
-      genes_list[genes_list$adj.p.value < u.threshold & genes_list$Dev > MinDEVthresh& genes_list$P_out < P_out,],genes_list[genes_list$adj.p.value < u.threshold & genes_list$Dev > MinDEVthresh& genes_list$P_out < P_out,]$Cluster),
-      function(x){x[[1]][1:5]})))
+    genesetshort <- unlist(sapply(split(genes_list[genes_list$Uscore > Uscore & genes_list$P_in > p_in & genes_list$P_out < p_out,],genes_list[genes_list$Uscore > Uscore & genes_list$P_in > p_in& genes_list$P_out < p_out,]$Cluster),function(x){x[[1]][1]}))
+
+    genesetlong <- unique(unlist(sapply(split(genes_list[genes_list$Uscore > Uscore & genes_list$P_in > p_in& genes_list$P_out < p_out,],genes_list[genes_list$Uscore > Uscore & genes_list$P_in > p_in& genes_list$P_out < p_out,]$Cluster),function(x){x[[1]][1:5]})))
 
     genesetlong
 
-    ##      Adamdec1.Fibro B.cells     CAF       Cancer     CAP.else   Endothelial Epithelial General.Fibro Macrofague
-    ## [1,] "ADAMDEC1"     "MS4A1"     "FAP"     "S100P"    "KCNJ8"    "ECSCR.1"   "CA2"      "OGN"         "TYROBP"  
-    ## [2,] "HAPLN1"       "BANK1"     "COL11A1" "LCN2"     "HIGD1B"   "PLVAP"     "GUCA2A"   "C1QTNF3"     "FCER1G"  
-    ## [3,] "CCL13"        "TNFRSF13C" "PODNL1"  "CEACAM6"  "EDNRA"    "CLDN5"     "VSIG2"    "MFAP5"       "AIF1"    
-    ## [4,] "CCL8"         "VPREB3"    "TMEM158" "PAFAH1B3" "ARHGAP15" "VWF"       "HMGCS2"   "CILP"        "LST1"    
-    ## [5,] "SFTA1P"       "LY9"       "COL10A1" "ASS1"     "ENPEP"    "PECAM1"    "GUCA2B"   "RSPO3"       "IL1B"    
-    ##      Normal.Muscle Plasma     Sox6..Stroma T.cells
-    ## [1,] "PLN"         "MZB1"     "NSG1"       "CD3D" 
-    ## [2,] "RERGL"       "DERL3"    "ENHO"       "CD7"  
-    ## [3,] "NTRK2"       "TNFRSF17" "EDNRB"      "CD3E" 
-    ## [4,] "C2orf40"     "CD27"     "BMP5"       "CD2"  
-    ## [5,] "ACTG2"       "FAM46C"   "SOX6"       "TRBC2"
+    ##      Adamdec1.Fibro B.cells     CAF       Cancer    CAP.else Endothelial Epithelial General.Fibro Macrofague Normal.Muscle
+    ## [1,] "ADAMDEC1"     "MS4A1"     "COL11A1" "S100P"   "KCNJ8"  "ECSCR.1"   "CA2"      "OGN"         "TYROBP"   "RERGL"      
+    ## [2,] "HAPLN1"       "BANK1"     "FAP"     "LCN2"    "HIGD1B" "CLDN5"     "VSIG2"    "PCOLCE2"     "AIF1"     "PLN"        
+    ## [3,] "CCL13"        "TNFRSF13C" "PODNL1"  "ASCL2"   "ENPEP"  "PLVAP"     "GUCA2A"   "PI16"        "FCER1G"   "NTRK2"      
+    ## [4,] "SFTA1P"       "VPREB3"    "COL10A1" "CEACAM6" "GJC1"   "VWF"       "ADH1C"    "CILP"        "LST1"     "C2orf40"    
+    ## [5,] "CCL8"         NA          "TMEM158" "ANXA3"   "EDNRA"  "PCAT19"    "MT1H"     "C1QTNF3"     "FCGR2A"   "ACTG2"      
+    ##      Plasma     Sox6..Stroma T.cells
+    ## [1,] "MZB1"     "NSG1"       "CD3D" 
+    ## [2,] "DERL3"    "ENHO"       "CD3E" 
+    ## [3,] "TNFRSF17" "BMP5"       "CD7"  
+    ## [4,] "CD27"     "SOX6"       "CD2"  
+    ## [5,] "FAM46C"   "EDNRB"      "TRBC1"
 
     #Order the cluster that had at least one marker that passed threshold, as you want them to be plotted.
     clusterorder<- c("CAF","General.Fibro","Adamdec1.Fibro","Normal.Muscle","Sox6..Stroma","CAP.else","Endothelial","Macrofague","T.cells","B.cells","Plasma","Epithelial","Cancer")
@@ -104,4 +105,4 @@ landscape of colorectal cancer.”*.
 
 # Plotting the results of the top U markers for each cluster
 
-![](README_files/figure-markdown_strict/plot-example-1.png)
+<img src="README_files/figure-markdown_strict/unnamed-chunk-10-1.png" width="100%" />
