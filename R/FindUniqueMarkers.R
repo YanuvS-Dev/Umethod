@@ -23,6 +23,7 @@ FindUniqueMarkers <- function(obj,
                               varfeatures = NULL,
                               smallcluster = NULL,
                               method = "BH",
+                              progresstext = T,
                               jumpFix = 200) # to fix the assay problem
 {
   if(is.null(varfeatures))
@@ -43,7 +44,7 @@ FindUniqueMarkers <- function(obj,
 
     # Loop with progress bar
     for (i in 1:(length(jumpind) - 2)) {
-      progress(i, max.value = length(jumpind) - 2)
+      if(progresstext){progress(i, max.value = length(jumpind) - 2)}
 
       features <- row.names(obj)[(jumpind[i] + 1):jumpind[i + 1]]
       temp_percent <- Percent_Expressing(seurat_object = obj, features = features, threshold = threshold, group_by = group_by)
@@ -52,7 +53,7 @@ FindUniqueMarkers <- function(obj,
     }
 
     # Finish progress bar
-    progress(length(jumpind) - 2, max.value = length(jumpind) - 2)
+    if(progresstext){progress(length(jumpind) - 2, max.value = length(jumpind) - 2)}
   }else
   {
     # Define variables
