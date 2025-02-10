@@ -7,7 +7,7 @@ output: html_document
 
 # Umethod
 
-**Umethod** is an R package designed for identifying unique markers in single-cell data sets, Use the FindUniqueMarkers function on a Seurat object after clustering to get the most unique markers for your clusters. CreateImageData can be used with u markers (or any else) for each cluster for downstream analysis, visualizing the markers on Visium HD spatial data.
+**Umethod** is an R package designed for identifying unique markers in single-cell data sets, Use the FindUniqueMarkers function on a Seurat object after clustering to get the most unique markers for your clusters. CreateImageData function can be used with U markers (or any other markers) for each cluster for downstream analysis, visualizing the markers on Visium HD spatial data.
 
 ## 🚀 Installation
 
@@ -24,7 +24,7 @@ library(Umethod)
 
 ## FindUniqueMarkers algorithm
 
-![process: Scoring each gene for each cluster, then testing for significant markers](C:/Migration/R projects/Umethod/UmethodImage.png){width=30%}
+![process: Scoring each gene for each cluster, then testing for significant markers](images/UmethodImage.png){width=30%}
 
 
 ### 📈 Example Usage
@@ -37,32 +37,29 @@ library(Umethod)
 library("scCustomize")
 library(cowplot)
 library(ggplot2)
+library(svMisc)
 
 # Load the published data set (replace with the actual data loading code)
 seurat_Full <- readRDS("C:\\Migration\\R projects\\Umethod\\ColonSinglecellDataLeesUmethod.rds")
 
 # Apply Umethod functions, if there are small/mixed clusters, their name should be added to smallcluster variable to omit them.
-# If the clusters are characters and not numbers, add matchnames = F
-genes_list <- FindUniqueMarkers(obj = seurat_Full,group_by = "Celltype",p.threshold = 0.2,
-                                varfeatures = row.names(seurat_Full),method = "none",
-                                smallcluster = c("CAFelse","SmallElse"),matchnames = F)
+# If the clusters are characters and not numbers,
+genes_list <- FindUniqueMarkers(obj = seurat_Full,group_by = "Celltype",method = "none",
+                                smallcluster = c("CAFelse","SmallElse"))
 
 # gene_list is the marker list ordered by score and cluster
 head(genes_list)
 
 # Choose thresholds 
-u.threshold <- 0.1
-MinDEVthresh <- 0.2
-P_out <- 0.3
+Uscore <- 0.25
+p_in <- 0.4
+p_out <- 0.3
 
 # Pulling the top 5 markers and the name of the top U marker for each cluster
-genesetshort <- unlist(sapply(split(
-  genes_list[genes_list$adj.p.value < u.threshold & genes_list$Dev > MinDEVthresh & genes_list$P_out < P_out,],genes_list[genes_list$adj.p.value < u.threshold & genes_list$Dev > MinDEVthresh& genes_list$P_out < P_out,]$Cluster),
-  function(x){x[[1]][1]}))
 
-genesetlong <- unique(unlist(sapply(split(
-  genes_list[genes_list$adj.p.value < u.threshold & genes_list$Dev > MinDEVthresh& genes_list$P_out < P_out,],genes_list[genes_list$adj.p.value < u.threshold & genes_list$Dev > MinDEVthresh& genes_list$P_out < P_out,]$Cluster),
-  function(x){x[[1]][1:5]})))
+genesetshort <- unlist(sapply(split(genes_list[genes_list$Uscore > Uscore & genes_list$P_in > p_in & genes_list$P_out < p_out,],genes_list[genes_list$Uscore > Uscore & genes_list$P_in > p_in& genes_list$P_out < p_out,]$Cluster),function(x){x[[1]][1]}))
+
+genesetlong <- unique(unlist(sapply(split(genes_list[genes_list$Uscore > Uscore & genes_list$P_in > p_in& genes_list$P_out < p_out,],genes_list[genes_list$Uscore > Uscore & genes_list$P_in > p_in& genes_list$P_out < p_out,]$Cluster),function(x){x[[1]][1:5]})))
 
 genesetlong
 
@@ -79,7 +76,7 @@ genesetshort <- genesetshort[indclusters]
 
 # Plotting the results of the top U markers for each cluster
 
-```{r,fig.width=29,fig.height=14,warning = FALSE, message = FALSE,plot-example, echo=FALSE}
+```{r,plot-example,fig.width=14,fig.height=7,warning = FALSE, message = FALSE, echo=FALSE}
 plot_grid(plot_grid(DimPlot(object = seurat_Full, reduction = "UMAP_on_harmony",pt.size = 0.5, group.by = "Celltype"),
                     DotPlot(seurat_Full,features = c(genesetlong),group.by = "Celltype",scale = F) + theme(axis.text.x = element_text(angle = 90,vjust = -0.0001)),ncol = 1),
           FeaturePlot(object = seurat_Full, features = genesetshort, cols = c("gray", "blue"),reduction = "UMAP_on_harmony",ncol = 3,order = T),ncol = 2)

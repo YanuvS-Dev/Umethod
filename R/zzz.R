@@ -7,7 +7,7 @@
   }
   # List of required packages
   required_packages <- c("scCustomize", "stringdist", "cowplot", "ggplot2", "reshape2",
-                         "scales", "plotly", "lubridate", "Seurat")
+                         "scales", "plotly", "lubridate", "Seurat","svMisc")
 
   # Install pak if not already installed
   if (!requireNamespace("pak", quietly = TRUE)) {
