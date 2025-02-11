@@ -24,12 +24,16 @@ library(Umethod)
 
 ## FindUniqueMarkers algorithm
 
-![process: Scoring each gene for each cluster, then testing for significant markers](images/UmethodImage.png){width=30%}
+```{r, echo=FALSE, out.width='30%'}
+knitr::include_graphics("images/UmethodImage.png")
+```
 
 
 ### 📈 Example Usage
 
-**Reference:** [Lee, Hae-Ock, et al. Nature genetics (2020)]. *"Lineage-dependent gene expression programs influence the immune landscape of colorectal cancer."*.
+**Reference:** [Lee, Hae-Ock, et al. Nature genetics (2020)]. *"Lineage-dependent gene expression programs influence the immune landscape of colorectal cancer."*, available from ArrayExpress E-MTAB-8410.
+
+To load the reananlyzed example data set directly from GitHub, use the following code in R
 
 ```{r,warning = FALSE, message = FALSE}
 # Load Umethod
@@ -40,7 +44,7 @@ library(ggplot2)
 library(svMisc)
 
 # Load the published data set (replace with the actual data loading code)
-seurat_Full <- readRDS("C:\\Migration\\R projects\\Umethod\\ColonSinglecellDataLeesUmethod.rds")
+seurat_Full <- readRDS("data/ColonSinglecellDataLeesUmethodSubsampled10.rds")
 
 # Apply Umethod functions, if there are small/mixed clusters, their name should be added to smallcluster variable to omit them.
 # The progress bar prints weird massages, in this rmd file I suppress it
