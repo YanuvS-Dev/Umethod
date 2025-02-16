@@ -44,7 +44,20 @@
     message("Skipping dependency installation.")
   }
 
-  # Always install Umethod (force reinstallation)
+  # Force reinstall Umethod package and skip temp loading test
   message("Installing Umethod package...")
-  devtools::install_github("YanuvS/Umethod", force = TRUE)
+
+  # Force reinstallation and skip testing temp location
+  tryCatch({
+    devtools::install_github("YanuvS/Umethod", force = TRUE)
+  }, error = function(e) {
+    message("Error installing Umethod package: ", e$message)
+  })
+
+  # Try loading Umethod to ensure installation was successful
+  if (!requireNamespace("Umethod", quietly = TRUE)) {
+    message("Umethod package installation failed.")
+  } else {
+    message("Umethod package installed successfully.")
+  }
 }
