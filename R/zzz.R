@@ -1,63 +1,56 @@
 .onLoad <- function(libname, pkgname) {
+
   options(repos = c(CRAN = "https://cloud.r-project.org/"))  # Set CRAN mirror
-
-  # Required dependencies
-  required_packages <- c("scCustomize", "stringdist", "cowplot", "ggplot2",
-                         "reshape2", "scales", "plotly", "lubridate", "Seurat", "svMisc")
-
-  # Ask user if they want to install dependencies (pauses execution)
-  repeat {
-    install_dependencies <- readline(prompt = "Do you want to install missing dependencies? (yes/no): ")
-    if (tolower(install_dependencies) %in% c("yes", "no")) break
-    message("Please enter 'yes' or 'no'.")
+  # Set the cache directory for pak
+  if (Sys.getenv("R_USER_CACHE_DIR", unset = "") == "") {
+    Sys.setenv(R_USER_CACHE_DIR = tempdir())  # Use temporary directory for checks
   }
 
-  # Function to install missing packages
-  install_missing_packages <- function(packages) {
-    for (pkg in packages) {
-      if (!requireNamespace(pkg, quietly = TRUE)) {
-        message(paste("Installing missing package:", pkg))
-        tryCatch({
-          if (pkg == "scCustomize") {
-            remotes::install_github("samuel-marsh/scCustomize")
-          } else {
-            install.packages(pkg)
-          }
-        }, error = function(e) {
-          message(paste("Failed to install package:", pkg))
-        })
-      } else {
-        message(paste(pkg, "is already installed."))
-      }
-    }
+  # List of required packages
+  required_packages <- c("scCustomize", "stringdist", "cowplot", "ggplot2", "reshape2",
+                         "scales", "plotly", "lubridate", "Seurat", "svMisc")
+
+  # Step 1: Ask if to install `pak` package
+  install_pak <- readline(prompt = "Do you want to install the pak package? (yes/no): ")
+  if (tolower(install_pak) == "yes" && !requireNamespace("pak", quietly = TRUE)) {
+    install.packages("pak")
+    message("pak package installed.")
   }
 
-  # Install dependencies if user agrees
-  if (tolower(install_dependencies) == "yes") {
-    missing_packages <- required_packages[sapply(required_packages, function(pkg) !requireNamespace(pkg, quietly = TRUE))]
-    if (length(missing_packages) > 0) {
-      install_missing_packages(missing_packages)
+  # Step 2: Ask if to install `scCustomize` package and choose installation method
+  install_scCustomize <- readline(prompt = "Do you want to install scCustomize? (yes/no): ")
+  if (tolower(install_scCustomize) == "yes") {
+    install_method <- readline(prompt = "Choose method for scCustomize installation (pak/remotes/skip): ")
+
+    if (tolower(install_method) == "pak" && !requireNamespace("scCustomize", quietly = TRUE)) {
+      pak::pkg_install("samuel-marsh/scCustomize")
+      message("scCustomize installed using pak.")
+    } else if (tolower(install_method) == "remotes" && !requireNamespace("scCustomize", quietly = TRUE)) {
+      remotes::install_github("samuel-marsh/scCustomize")
+      message("scCustomize installed using remotes.")
     } else {
-      message("All dependencies are already installed.")
+      message("Skipping scCustomize installation.")
     }
-  } else {
-    message("Skipping dependency installation.")
   }
 
-  # Force reinstall Umethod package and skip temp loading test
+  # Step 3: Install other missing dependencies using pak
+  install_dependencies <- readline(prompt = "Do you want to install missing dependencies? (yes/no): ")
+  if (tolower(install_dependencies) == "yes") {
+    if (requireNamespace("pak", quietly = TRUE)) {
+      for (pkg in required_packages) {
+        if (!requireNamespace(pkg, quietly = TRUE)) {
+          message(paste("Installing missing package:", pkg))
+          pak::pkg_install(pkg)
+        }
+      }
+    } else {
+      message("pak is not installed. Skipping dependency installation.")
+    }
+  }
+
+  # Step 4: Install Umethod package (always)
   message("Installing Umethod package...")
+  devtools::install_github("YanuvS/Umethod", force = TRUE)
+  message("Umethod package installed successfully.")
 
-  # Force reinstallation and skip testing temp location
-  tryCatch({
-    devtools::install_github("YanuvS/Umethod", force = TRUE)
-  }, error = function(e) {
-    message("Error installing Umethod package: ", e$message)
-  })
-
-  # Try loading Umethod to ensure installation was successful
-  if (!requireNamespace("Umethod", quietly = TRUE)) {
-    message("Umethod package installation failed.")
-  } else {
-    message("Umethod package installed successfully.")
-  }
 }
