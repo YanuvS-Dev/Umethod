@@ -1,13 +1,16 @@
 .onLoad <- function(libname, pkgname) {
-
   options(repos = c(CRAN = "https://cloud.r-project.org/"))  # Set CRAN mirror
 
-  # List of required packages
+  # Required dependencies
   required_packages <- c("scCustomize", "stringdist", "cowplot", "ggplot2",
                          "reshape2", "scales", "plotly", "lubridate", "Seurat", "svMisc")
 
-  # Ask user if they want to install dependencies
-  install_dependencies <- readline("Do you want to install missing dependencies? (yes/no): ")
+  # Ask user if they want to install dependencies (pauses execution)
+  repeat {
+    install_dependencies <- readline(prompt = "Do you want to install missing dependencies? (yes/no): ")
+    if (tolower(install_dependencies) %in% c("yes", "no")) break
+    message("Please enter 'yes' or 'no'.")
+  }
 
   # Function to install missing packages
   install_missing_packages <- function(packages) {
@@ -15,7 +18,7 @@
       if (!requireNamespace(pkg, quietly = TRUE)) {
         message(paste("Installing missing package:", pkg))
         tryCatch({
-          if (pkg == "scCustomize" && !requireNamespace(pkg, quietly = TRUE)) {
+          if (pkg == "scCustomize") {
             remotes::install_github("samuel-marsh/scCustomize")
           } else {
             install.packages(pkg)
@@ -37,13 +40,11 @@
     } else {
       message("All dependencies are already installed.")
     }
+  } else {
+    message("Skipping dependency installation.")
   }
 
-  # Now install Umethod package if not already installed
-  if (!requireNamespace("Umethod", quietly = TRUE)) {
-    message("Installing Umethod package...")
-    devtools::install_github("YanuvS/Umethod")
-  } else {
-    message("Umethod package is already installed.")
-  }
+  # Always install Umethod (force reinstallation)
+  message("Installing Umethod package...")
+  devtools::install_github("YanuvS/Umethod", force = TRUE)
 }
