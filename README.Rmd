@@ -13,18 +13,18 @@ output: html_document
 
 To install Umethod from GitHub:
 
-#### Install devtools if you haven't already
-install.packages("devtools")
+#### Install remotes if you haven't already
+install.packages("remotes")
 
 #### Install Umethod from GitHub
-devtools::install_github("YanuvS/Umethod")
+remotes::install_github("YanuvS-Dev/Umethod")
 
 #### Load the package
 library(Umethod)
 
 ## FindUniqueMarkers algorithm
 
-```{r, echo=FALSE, out.width='30%'}
+```{r, echo=FALSE, out.width='40%'}
 knitr::include_graphics("images/UmethodImage.png")
 ```
 

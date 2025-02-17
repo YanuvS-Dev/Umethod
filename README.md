@@ -11,13 +11,13 @@ markers on Visium HD spatial data.
 
 To install Umethod from GitHub:
 
-#### Install devtools if you haven’t already
+#### Install remotes if you haven’t already
 
-install.packages(“devtools”)
+install.packages(“remotes”)
 
 #### Install Umethod from GitHub
 
-devtools::install\_github(“YanuvS/Umethod”)
+remotes::install\_github(“YanuvS-Dev/Umethod”)
 
 #### Load the package
 
@@ -25,7 +25,7 @@ library(Umethod)
 
 ## FindUniqueMarkers algorithm
 
-<img src="images/UmethodImage.png" width="30%" />
+<img src="images/UmethodImage.png" width="40%" />
 
 ### 📈 Example Usage
 
