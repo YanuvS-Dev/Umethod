@@ -10,7 +10,8 @@ License: MIT + file LICENSE
 Depends: 
     R (>= 3.6.1)
 Imports:
-    pak (>= 0.0.1), 
+    pak (>= 0.0.1),  # Correct version if necessary
+    testthat (>= 3.0.0), 
     Seurat,
     ggplot2,
     stringdist,
@@ -21,7 +22,6 @@ Imports:
     lubridate,
     svMisc
 Suggests:
-    testthat (>= 3.0.0), 
     remotes
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
