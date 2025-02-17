@@ -1,7 +1,7 @@
 Package: Umethod
 Type: Package
 Title: A Package for Unique Marker Detection in single cell Seurat object after clustering
-Version: 1.0.1b
+Version: 1.0.1
 Authors@R: 
     person("Yaniv", "Stein", , "yanuv.stein@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0331-772X"))
