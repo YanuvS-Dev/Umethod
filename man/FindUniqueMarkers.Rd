@@ -7,17 +7,14 @@
 FindUniqueMarkers(
   obj,
   group_by,
-  p.threshold = 0.2,
+  p.threshold = 1,
   threshold = 0,
   P_in.thersh = 0,
   P_out.thersh = 1,
   varfeatures = NULL,
-  reduction = "UMAP_on_harmony",
-  onlyOnetime = T,
   smallcluster = NULL,
   method = "BH",
-  matchnames = T,
-  matchnames_try2 = F,
+  progresstext = T,
   jumpFix = 200
 )
 }
@@ -33,6 +30,8 @@ FindUniqueMarkers(
 \item{P_in.thersh}{probability of expressing inside the cluster threshold}
 
 \item{varfeatures}{Which features to enter the analysis. For correct analysis = row.names(seurat.obj),if NULL this method will run on the 2000 most variable genes}
+
+\item{smallcluster}{a vector of cluster names so they will be omited from the analysis, if there are small mixed clusters it is best if you ommit them here}
 }
 \value{
 A data.frame object with the most uniquely expressed genes per cluster,that passed filtering parameters.
