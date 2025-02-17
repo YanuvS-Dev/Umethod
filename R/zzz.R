@@ -1,14 +1,11 @@
 .onLoad <- function(libname, pkgname) {
 
-  options(repos = c(CRAN = "https://cloud.r-project.org/"))  # Set CRAN mirror
-  # Set the cache directory for pak
-  if (Sys.getenv("R_USER_CACHE_DIR", unset = "") == "") {
-    Sys.setenv(R_USER_CACHE_DIR = tempdir())  # Use temporary directory for checks
-  }
-
   # List of required packages
   required_packages <- c("scCustomize", "stringdist", "cowplot", "ggplot2", "reshape2",
                          "scales", "plotly", "lubridate", "Seurat", "svMisc")
+
+  # Prevent multiple prompts during package installation
+  already_installed <- FALSE
 
   # Check if pak is installed
   if (!requireNamespace("pak", quietly = TRUE)) {
@@ -50,12 +47,4 @@
     message("Skipping installation of missing dependencies.")
   }
 
-  # Check if Umethod is installed and install if not
-  if (!requireNamespace("Umethod", quietly = TRUE)) {
-    message("Umethod package is not installed. Installing Umethod...")
-    devtools::install_github("YanuvS/Umethod", force = TRUE)
-    message("Umethod package installed successfully.")
-  } else {
-    message("Umethod package is already installed.")
-  }
 }
