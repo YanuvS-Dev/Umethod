@@ -25,7 +25,7 @@ library(Umethod)
 
 ## FindUniqueMarkers algorithm
 
-<img src="images/UmethodImage.png" width="40%" />
+<img src="images/UmethodImage.png" width="50%" />
 
 ### 📈 Example Usage
 
@@ -45,7 +45,8 @@ following code in R
     library(svMisc)
 
     # Load the published data set (replace with the actual data loading code)
-    seurat_Full <- readRDS("data/ColonSinglecellDataLeesUmethodSubsampled10.rds")
+    rds_url <- "https://github.com/YanuvS-Dev/Umethod/raw/master/inst/extdata/ColonSinglecellDataLeesUmethodSubsampled10.rds"
+    seurat_Full <- readRDS(url(rds_url, "rb"))
 
     # Apply Umethod functions, if there are small/mixed clusters, their name should be added to smallcluster variable to omit them.
     # The progress bar prints weird massages, in this rmd file I suppress it
