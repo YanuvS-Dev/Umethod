@@ -12,6 +12,10 @@ CreateImageData(bc_matrix, poaraq, markers, project = NULL, print.table = F)
 \item{poaraq}{poaraq file can be loaded by read_parquet(".../Visium_HD__binned_outputX2um/spatial/tissue_positions.parquet")}
 
 \item{markers}{marker list to plot on visium HD data}
+
+\item{project}{name of the project passed to output Seurat object}
+
+\item{print.table}{should the number of spots per marker be plotted}
 }
 \value{
 Seurat object with all data on markers needed for downstream analysis

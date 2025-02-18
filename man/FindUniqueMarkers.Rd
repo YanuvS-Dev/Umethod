@@ -2,7 +2,7 @@
 % Please edit documentation in R/FindUniqueMarkers.R
 \name{FindUniqueMarkers}
 \alias{FindUniqueMarkers}
-\title{Find Unique Markers - U method}
+\title{Find Unique Markers - U Method}
 \usage{
 FindUniqueMarkers(
   obj,
@@ -19,24 +19,32 @@ FindUniqueMarkers(
 )
 }
 \arguments{
-\item{obj}{Seurat object after any clustering}
+\item{obj}{A Seurat object after clustering.}
 
-\item{group_by}{The cluster labels in metafile of obj}
+\item{group_by}{The cluster labels in the metadata of \code{obj}.}
 
-\item{p.threshold}{p.value threshold for the Umethod}
+\item{p.threshold}{The p-value threshold for the U method. Defaults to a value of 0.05.}
 
-\item{threshold}{what is the expression threshold that a cell is counted as positive for this gene, default is 0.}
+\item{threshold}{The expression threshold above which a cell is considered positive for a gene. Default is 0.}
 
-\item{P_in.thersh}{probability of expressing inside the cluster threshold}
+\item{varfeatures}{The features (genes) to use in the analysis. By default, the 2000 most variable genes will be used unless specified otherwise. If NULL, the method uses the 2000 most variable genes.}
 
-\item{varfeatures}{Which features to enter the analysis. For correct analysis = row.names(seurat.obj),if NULL this method will run on the 2000 most variable genes}
+\item{smallcluster}{A vector of cluster names to exclude from the analysis. This is useful for omitting small mixed clusters.}
 
-\item{smallcluster}{a vector of cluster names so they will be omited from the analysis, if there are small mixed clusters it is best if you ommit them here}
+\item{method}{The p-value adjustment method. Defaults to "BH" (Benjamini-Hochberg). Set to "none" for raw p-values or choose other methods available in the \code{p.adjust} function.}
+
+\item{progresstext}{Boolean indicating whether to display a progress bar during the analysis. Defaults to \code{TRUE}.}
+
+\item{jumpFix}{An integer specifying how many genes to process in each iteration to avoid potential bugs with large gene lists.}
+
+\item{P_in_thresh}{The minimum probability of expressing a gene inside the cluster for filtering the final results. Default keeps the full gene list.}
+
+\item{P_out_thresh}{The maximum probability of expressing a gene in any other cluster for filtering the final results. Default keeps the full gene list.}
 }
 \value{
-A data.frame object with the most uniquely expressed genes per cluster,that passed filtering parameters.
+A \code{data.frame} containing the most uniquely expressed genes per cluster that passed the filtering criteria.
 }
 \description{
-This function identifies the most unique markers per cluster in a Seurat object.
-If the cluster are labeled as charachters, and not numbers, matchnames parameter shoud be F.
+This function identifies the most unique markers for each cluster in a Seurat object.
+It supports both numerical and character-based cluster labels. If the clusters are labeled as characters, set the \code{matchnames} parameter to \code{FALSE}.
 }

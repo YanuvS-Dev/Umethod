@@ -1,17 +1,22 @@
 
-#' Find Unique Markers - U method
+#' Find Unique Markers - U Method
 #'
-#' This function identifies the most unique markers per cluster in a Seurat object.
-#' If the cluster are labeled as charachters, and not numbers, matchnames parameter shoud be F.
+#' This function identifies the most unique markers for each cluster in a Seurat object.
+#' It supports both numerical and character-based cluster labels. If the clusters are labeled as characters, set the `matchnames` parameter to `FALSE`.
 #'
-#' @param obj Seurat object after any clustering
-#' @param group_by The cluster labels in metafile of obj
-#' @param p.threshold p.value threshold for the Umethod
-#' @param threshold what is the expression threshold that a cell is counted as positive for this gene, default is 0.
-#' @param P_in.thersh probability of expressing inside the cluster threshold
-#' @param varfeatures Which features to enter the analysis. For correct analysis = row.names(seurat.obj),if NULL this method will run on the 2000 most variable genes
-#' @param smallcluster a vector of cluster names so they will be omited from the analysis, if there are small mixed clusters it is best if you ommit them here
-#' @return A data.frame object with the most uniquely expressed genes per cluster,that passed filtering parameters.
+#' @param obj A Seurat object after clustering.
+#' @param group_by The cluster labels in the metadata of `obj`.
+#' @param p.threshold The p-value threshold for the U method. Defaults to a value of 0.05.
+#' @param threshold The expression threshold above which a cell is considered positive for a gene. Default is 0.
+#' @param P_in_thresh The minimum probability of expressing a gene inside the cluster for filtering the final results. Default keeps the full gene list.
+#' @param P_out_thresh The maximum probability of expressing a gene in any other cluster for filtering the final results. Default keeps the full gene list.
+#' @param varfeatures The features (genes) to use in the analysis. By default, the 2000 most variable genes will be used unless specified otherwise. If NULL, the method uses the 2000 most variable genes.
+#' @param smallcluster A vector of cluster names to exclude from the analysis. This is useful for omitting small mixed clusters.
+#' @param jumpFix An integer specifying how many genes to process in each iteration to avoid potential bugs with large gene lists.
+#' @param method The p-value adjustment method. Defaults to "BH" (Benjamini-Hochberg). Set to "none" for raw p-values or choose other methods available in the `p.adjust` function.
+#' @param progresstext Boolean indicating whether to display a progress bar during the analysis. Defaults to `TRUE`.
+#'
+#' @return A `data.frame` containing the most uniquely expressed genes per cluster that passed the filtering criteria.
 #' @export
 
 FindUniqueMarkers <- function(obj,

@@ -6,6 +6,8 @@
 #' @param bc_matrix 10x filtered matrix, can be loaded by Read10X(".../Visium_HD__binned_outputsXum/filtered_feature_bc_matrix/"), X in (2,8,16).
 #' @param poaraq poaraq file can be loaded by read_parquet(".../Visium_HD__binned_outputX2um/spatial/tissue_positions.parquet")
 #' @param markers marker list to plot on visium HD data
+#' @param print.table should the number of spots per marker be plotted
+#' @param project name of the project passed to output Seurat object
 #' @return Seurat object with all data on markers needed for downstream analysis
 #' @export
 

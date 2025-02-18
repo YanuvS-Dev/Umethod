@@ -12,7 +12,7 @@
     install_pak <- readline(prompt = "Do you want to install the pak package? (yes/no): ")
     if (tolower(install_pak) == "yes") {
       install.packages("pak")
-      message("pak package installed.")
+      packageStartupMessage("pak package installed.")
     }
   }
 
@@ -24,12 +24,12 @@
 
       if (tolower(install_method) == "pak") {
         pak::pkg_install("samuel-marsh/scCustomize")
-        message("scCustomize installed using pak.")
+        packageStartupMessage("scCustomize installed using pak.")
       } else if (tolower(install_method) == "remotes") {
         remotes::install_github("samuel-marsh/scCustomize")
-        message("scCustomize installed using remotes.")
+        packageStartupMessage("scCustomize installed using remotes.")
       } else {
-        message("Skipping scCustomize installation.")
+        packageStartupMessage("Skipping scCustomize installation.")
       }
     }
   }
@@ -39,12 +39,12 @@
   if (tolower(install_dependencies) == "yes") {
     for (pkg in required_packages) {
       if (!requireNamespace(pkg, quietly = TRUE)) {
-        message(paste("Installing missing package:", pkg))
+        packageStartupMessage(paste("Installing missing package:", pkg))
         pak::pkg_install(pkg)
       }
     }
   } else {
-    message("Skipping installation of missing dependencies.")
+    packageStartupMessage("Skipping installation of missing dependencies.")
   }
 
 }

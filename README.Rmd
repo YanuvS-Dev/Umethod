@@ -24,7 +24,7 @@ library(Umethod)
 
 ## FindUniqueMarkers algorithm
 
-```{r, echo=FALSE, out.width='40%'}
+```{r, echo=FALSE, out.width='50%'}
 knitr::include_graphics("images/UmethodImage.png")
 ```
 
@@ -44,7 +44,7 @@ library(ggplot2)
 library(svMisc)
 
 # Load the published data set (replace with the actual data loading code)
-seurat_Full <- readRDS("data/ColonSinglecellDataLeesUmethodSubsampled10.rds")
+seurat_Full <- readRDS(system.file("extdata", "ColonSinglecellDataLeesUmethodSubsampled10.rds", package = "Umethod"))
 
 # Apply Umethod functions, if there are small/mixed clusters, their name should be added to smallcluster variable to omit them.
 # The progress bar prints weird massages, in this rmd file I suppress it
