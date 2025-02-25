@@ -1,0 +1,42 @@
+[33m576f3ee[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m Updated RMD file for CRAN
+[33m23d1ee4[m[33m ([m[1;31morigin/master[m[33m)[m Removed .github folder
+[33m9325446[m Remove unnecessary data folder
+[33m11dc3c4[m package update to fit CRAN
+[33m0011d4b[m Updated DESCRIPTION file
+[33m887fa40[m Updated DESCRIPTION file
+[33m0592981[m Updated DESCRIPTION file
+[33m6f9492f[m Updated DESCRIPTION file
+[33ma342acc[m Updated DESCRIPTION file
+[33m014bcbc[m Updated DESCRIPTION file
+[33mc078a86[m Updated DESCRIPTION file
+[33m750347b[m Updated DESCRIPTION file
+[33m5531267[m Updated DESCRIPTION file
+[33m0b86b7a[m[33m ([m[1;33mtag: v1.0.1-beta[m[33m)[m Updated package after moving to YanuvS-Dev organization
+[33m4adeb76[m Merge branch 'master' of https://github.com/YanuvS-Dev/Umethod
+[33mddd19f5[m Updated package after moving to YanuvS-Dev organization
+[33md011578[m Update r.yml
+[33m5e0cf9a[m Release v1.0.0-beta
+[33m15338b8[m[33m ([m[1;33mtag: v1.0.0-beta[m[33m)[m relese v1.0.0-beta
+[33m1c7a5fb[m Merge branch 'master' of https://github.com/YanuvS/Umethod
+[33mfb21eff[m Version 1.0.0 relese
+[33m8cc970a[m Create r.yml
+[33mfa010e3[m Updated R/zzz.R script
+[33m6cc4004[m Updated R/zzz.R script
+[33m0cb858b[m Updated R/zzz.R script
+[33md0a8023[m Updated R/zzz.R script
+[33m1cb13e5[m Updated R/zzz.R script
+[33m97c5a1a[m Updated R/zzz.R script
+[33m0f36877[m Updated R/zzz.R script
+[33m8121a74[m Updated R/zzz.R script
+[33m129ecfe[m Add rendered README.md with subsampled 10% data and associated images
+[33m0871021[m Add subsampled Seurat object
+[33m07f46c5[m Remove large RDS file from Git history
+[33mfc0f23e[m Add data folder with RDS files
+[33mb270524[m Update README
+[33m1338f0e[m FindUniqueMarkers print on Rmarkdown progress bar warning
+[33md664504[m FindUniqueMarkers big change - p.value on dev
+[33m7d62ffd[m Update README with image
+[33mf1dd650[m Add images folder and update README
+[33mf1a7b11[m Updated README with plot
+[33m9b94793[m Added README with example and instructions
+[33me1f5978[m Initial commit for Umethod package

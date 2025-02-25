@@ -12,9 +12,7 @@
 #' @param P_out_thresh The maximum probability of expressing a gene in any other cluster for filtering the final results. Default keeps the full gene list.
 #' @param varfeatures The features (genes) to use in the analysis. By default, the 2000 most variable genes will be used unless specified otherwise. If NULL, the method uses the 2000 most variable genes.
 #' @param smallcluster A vector of cluster names to exclude from the analysis. This is useful for omitting small mixed clusters.
-#' @param jumpFix An integer specifying how many genes to process in each iteration to avoid potential bugs with large gene lists.
 #' @param method The p-value adjustment method. Defaults to "BH" (Benjamini-Hochberg). Set to "none" for raw p-values or choose other methods available in the `p.adjust` function.
-#' @param progresstext Boolean indicating whether to display a progress bar during the analysis. Defaults to `TRUE`.
 #'
 #' @return A `data.frame` containing the most uniquely expressed genes per cluster that passed the filtering criteria.
 #' @export
@@ -27,99 +25,86 @@ FindUniqueMarkers <- function(obj,
                               P_out.thersh = 1,
                               varfeatures = NULL,
                               smallcluster = NULL,
-                              method = "BH",
-                              progresstext = T,
-                              jumpFix = 200) # to fix the assay problem
+                              method = "BH")
 {
-  if(is.null(varfeatures))
-  {
-    # Define variables
-    nvarfeatures <- length(row.names(obj))
-    jumpind <- seq(0, nvarfeatures, jumpFix)
-
-    # Create an empty data frame with genes as rows and clusters as columns
-    clusters <- unique(obj@meta.data[[group_by]])
-    percent_stats <- data.frame(matrix(0, nrow = nvarfeatures, ncol = length(clusters)))
-    rownames(percent_stats) <- row.names(obj)
-    colnames(percent_stats) <- clusters
-
-    # Calculate initial percentages
-    initial_percent <- Percent_Expressing(seurat_object = obj, features = row.names(obj)[1:jumpFix], threshold = threshold, group_by = group_by)
-    percent_stats[rownames(initial_percent), colnames(initial_percent)] <- initial_percent
-
-    # Loop with progress bar
-    for (i in 1:(length(jumpind) - 2)) {
-      if(progresstext){progress(i, max.value = length(jumpind) - 2)}
-
-      features <- row.names(obj)[(jumpind[i] + 1):jumpind[i + 1]]
-      temp_percent <- Percent_Expressing(seurat_object = obj, features = features, threshold = threshold, group_by = group_by)
-
-      percent_stats[rownames(temp_percent), colnames(temp_percent)] <- temp_percent
-    }
-
-    # Finish progress bar
-    if(progresstext){progress(length(jumpind) - 2, max.value = length(jumpind) - 2)}
+  # Determine expression matrix format
+  expr_matrix <- if (class(obj[["RNA"]])[1] == "Assay5") {
+    obj@assays$RNA@layers$counts
   }else
   {
-    # Define variables
-    nvarfeatures <- length(varfeatures)
-    jumpind <- seq(0, nvarfeatures, jumpFix)
-
-    # Create an empty data frame with genes as rows and clusters as columns
-    clusters <- unique(obj@meta.data[[group_by]])
-    percent_stats <- data.frame(matrix(0, nrow = nvarfeatures, ncol = length(clusters)))
-    rownames(percent_stats) <- varfeatures
-    colnames(percent_stats) <- clusters
-
-    # Calculate initial percentages
-    initial_percent <- Percent_Expressing(seurat_object = obj, features = varfeatures[1:jumpFix], threshold = threshold, group_by = group_by)
-    percent_stats[rownames(initial_percent), colnames(initial_percent)] <- initial_percent
-
-    # Loop with progress bar
-    for (i in 1:(length(jumpind) - 2)) {
-      progress(i, max.value = length(jumpind) - 2)
-
-      features <- varfeatures[(jumpind[i] + 1):jumpind[i + 1]]
-      temp_percent <- Percent_Expressing(seurat_object = obj, features = features, threshold = threshold, group_by = group_by)
-
-      percent_stats[rownames(temp_percent), colnames(temp_percent)] <- temp_percent
-    }
-
-    # Finish progress bar
-    progress(length(jumpind) - 2, max.value = length(jumpind) - 2)
+    obj@assays$RNA@counts
   }
 
+  groups <- obj@meta.data[[group_by]]
 
-  # Calculating u-scores, Pin and Pout
-  Uscorestats <- t(apply(percent_stats[,which(!(colnames(percent_stats) %in% smallcluster))],1,function(x){ifelse(sort(x/100, decreasing = TRUE)[1] - x/100 == 0,x/100 - sort(x/100, decreasing = TRUE)[2],x/100 - sort(x/100, decreasing = TRUE)[1])})) # (MI-max(MItag))
-  Pout <- t(apply(percent_stats[,which(!(colnames(percent_stats) %in% smallcluster))],1,function(x){ifelse(sort(x/100, decreasing = TRUE)[1] - x/100 == 0,sort(x/100, decreasing = TRUE)[2],sort(x/100, decreasing = TRUE)[1])})) # (MI-max(MItag))
-  Pin<- t(apply(percent_stats[,which(!(colnames(percent_stats) %in% smallcluster))],1,function(x){x/100})) # (MI-max(MItag))
+  if (is.null(varfeatures)) {
+    varfeatureschoose <- rownames(obj)
+  }
 
-  Uscoresz <- apply(Uscorestats,2,function(x){(x-mean(x,na.rm = T))/sd(x,na.rm = T)})
+  # Binarize expression matrix based on threshold
+  binary_matrix <- expr_matrix[row.names(obj) %in% varfeatureschoose, ] > threshold
 
-  order_ind <- sapply(as.list(colnames(Uscoresz)),function(x){names(sort(Uscoresz[,x],decreasing = T))})
-
-  # adjusted p-value calculation
-  UscoreszPvalue <- apply(Uscoresz,2,function(x){p.adjust(1 - pnorm(x),method = method)}) # NEW
-
-  ###
-  l <- list()
-
-  for(i in colnames(Uscorestats))
+  # Compute percentage of expressing cells per cluster
+  if(any("factor" %in% class(groups)))
   {
-    l[[i]] <- data.frame(Gene = names(sort(Uscorestats[,i],decreasing = T)),
-                         Cluster = i,Uscore =sort(Uscorestats[,i],decreasing = T),
-                         adj.p.value = UscoreszPvalue[names(sort(Uscorestats[,i],decreasing = T)),i],
-                         P_in = Pin[names(sort(Uscorestats[,i],decreasing = T)),i],
-                         P_out = Pout[names(sort(Uscorestats[,i],decreasing = T)),i])
-  }
+    clusters <- levels(groups)
 
-  l_out <- l[[1]]
-  for(i in colnames(Uscorestats)[-1])
+  }else
   {
-    l_out <- rbind(l_out,l[[i]])
+    clusters <- unique(groups)
   }
 
-  return(l_out[which( l_out$adj.p.value < p.threshold & l_out$P_in >= P_in.thersh & l_out$P_out <= P_out.thersh ),])
+  percent_stats <- sapply(clusters, function(cluster) {
+    rowMeans(binary_matrix[, groups == cluster]) * 100
+  })
 
+  rownames(percent_stats) <- varfeatureschoose
+  colnames(percent_stats) <- clusters
+
+  if(is.null(smallcluster)){
+    ind_column <- 1:length(clusters)
+  }else
+  {
+    ind_column <- c(1:length(clusters))[-which(colnames(percent_stats) %in% smallcluster)]
+  }
+
+  # Compute U-scores, Pin, and Pout
+  Uscorestats <- t(apply(percent_stats[,ind_column], 1, function(x) {
+    sorted_x <- sort(x / 100, decreasing = TRUE)
+    x / 100 - ifelse(sorted_x[1] == x / 100, sorted_x[2], sorted_x[1])
+  }))
+
+  Pout <- t(apply(percent_stats[,ind_column], 1, function(x) {
+    sorted_x <- sort(x / 100, decreasing = TRUE)
+    ifelse(sorted_x[1] == x / 100, sorted_x[2], sorted_x[1])
+  }))
+
+  Pin <- t(apply(percent_stats, 1, function(x) x / 100))
+
+  # Z-score transformation of U-scores
+  Uscoresz <- apply(Uscorestats, 2, function(x) {
+    (x - mean(x, na.rm = TRUE)) / sd(x, na.rm = TRUE)
+  })
+
+  # Adjusted p-values
+  UscoreszPvalue <- apply(Uscoresz, 2, function(x) {
+    p.adjust(1 - pnorm(x), method = method)
+  })
+
+  # Compile results into a data frame
+  l_out <- do.call(rbind, lapply(colnames(Uscorestats), function(i) {
+    data.frame(
+      Gene = rownames(Uscorestats),
+      Cluster = i,
+      Uscore = Uscorestats[, i],
+      adj.p.value = UscoreszPvalue[, i],
+      P_in = Pin[, i],
+      P_out = Pout[, i]
+    )
+  }))
+
+  # Filter based on thresholds
+  l_out <- l_out[l_out$adj.p.value < p.threshold & l_out$P_in >= P_in.thersh & l_out$P_out <= P_out.thersh, ]
+  l_out <- l_out[order(l_out$Cluster, -l_out$Uscore), ]
+  return(l_out)
 }
