@@ -13,9 +13,7 @@ FindUniqueMarkers(
   P_out.thersh = 1,
   varfeatures = NULL,
   smallcluster = NULL,
-  method = "BH",
-  progresstext = T,
-  jumpFix = 200
+  method = "BH"
 )
 }
 \arguments{
@@ -32,10 +30,6 @@ FindUniqueMarkers(
 \item{smallcluster}{A vector of cluster names to exclude from the analysis. This is useful for omitting small mixed clusters.}
 
 \item{method}{The p-value adjustment method. Defaults to "BH" (Benjamini-Hochberg). Set to "none" for raw p-values or choose other methods available in the \code{p.adjust} function.}
-
-\item{progresstext}{Boolean indicating whether to display a progress bar during the analysis. Defaults to \code{TRUE}.}
-
-\item{jumpFix}{An integer specifying how many genes to process in each iteration to avoid potential bugs with large gene lists.}
 
 \item{P_in_thresh}{The minimum probability of expressing a gene inside the cluster for filtering the final results. Default keeps the full gene list.}
 

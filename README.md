@@ -104,4 +104,4 @@ following code in R
 
 # Plotting the results of the top U markers for each cluster
 
-<img src="README_files/figure-markdown_strict/unnamed-chunk-4-1.png" width="100%" />
+<img src="README_files/figure-markdown_strict/unnamed-chunk-3-1.png" width="100%" />
