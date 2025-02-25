@@ -38,7 +38,6 @@ To load the reananlyzed example data set directly from GitHub, use the following
 ```{r,warning = FALSE, message = FALSE}
 # Load Umethod
 library(Umethod)
-library("scCustomize")
 library(cowplot)
 library(ggplot2)
 library(svMisc)
@@ -53,8 +52,7 @@ genes_list <- FindUniqueMarkers(
     obj = seurat_Full,
     group_by = "Celltype",
     method = "none",
-    smallcluster = c("CAFelse", "SmallElse"),
-    progresstext = F)
+    smallcluster = c("CAFelse", "SmallElse"))
 
 # gene_list is the marker list ordered by score and cluster
 head(genes_list)

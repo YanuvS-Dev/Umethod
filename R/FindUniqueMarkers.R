@@ -55,7 +55,7 @@ FindUniqueMarkers <- function(obj,
   }
 
   percent_stats <- sapply(clusters, function(cluster) {
-    rowMeans(binary_matrix[, groups == cluster]) * 100
+    Matrix::rowMeans(binary_matrix[, groups == cluster]) * 100
   })
 
   rownames(percent_stats) <- varfeatureschoose
