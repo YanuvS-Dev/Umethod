@@ -13,11 +13,11 @@ output: html_document
 
 To install Umethod from GitHub:
 
-#### Install remotes if you haven't already
-install.packages("remotes")
+#### Install devtools if you haven't already
+install.packages("devtools")
 
 #### Install Umethod from GitHub
-remotes::install_github("YanuvS-Dev/Umethod")
+devtools::install_github("YanuvS-Dev/Umethod")
 
 #### Load the package
 library(Umethod)
@@ -41,6 +41,7 @@ library(Umethod)
 library(cowplot)
 library(ggplot2)
 library(svMisc)
+library(Seurat)
 
 # Load the published data set (replace with the actual data loading code)
 rds_url <- "https://github.com/YanuvS-Dev/Umethod/raw/master/inst/extdata/ColonSinglecellDataLeesUmethodSubsampled10.rds"
@@ -71,7 +72,7 @@ genesetlong <- unique(unlist(sapply(split(genes_list[genes_list$Uscore > Uscore 
 genesetlong
 
 #Order the cluster that had at least one marker that passed threshold, as you want them to be plotted.
-clusterorder<- c("CAF","General.Fibro","Adamdec1.Fibro","Normal.Muscle","Sox6..Stroma","CAP.else","Endothelial","Macrofague","T.cells","B.cells","Plasma","Epithelial","Cancer")
+clusterorder<- c("CAF","General Fibro","Adamdec1 Fibro","Normal Muscle","Sox6+ Stroma","CAP else","Endothelial","Macrofague","T-cells","B cells","Plasma","Epithelial","Cancer")
 # Ordering the clusters that had any umarkers from genesetlong for dotplot
 indclusters <- rep(NA,dim(genesetlong)[2])
 for(i in 1:dim(genesetlong)[2]){indclusters[i] <- which(colnames(genesetlong) == clusterorder[i])}

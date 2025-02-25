@@ -368,13 +368,13 @@ visualizing the markers on Visium HD spatial data.</p>
 <div id="installation" class="section level2">
 <h2>🚀 Installation</h2>
 <p>To install Umethod from GitHub:</p>
-<div id="install-remotes-if-you-havent-already" class="section level4">
-<h4>Install remotes if you haven’t already</h4>
-<p>install.packages(“remotes”)</p>
+<div id="install-devtools-if-you-havent-already" class="section level4">
+<h4>Install devtools if you haven’t already</h4>
+<p>install.packages(“devtools”)</p>
 </div>
 <div id="install-umethod-from-github" class="section level4">
 <h4>Install Umethod from GitHub</h4>
-<p>remotes::install_github(“YanuvS-Dev/Umethod”)</p>
+<p>devtools::install_github(“YanuvS-Dev/Umethod”)</p>
 </div>
 <div id="load-the-package" class="section level4">
 <h4>Load the package</h4>
@@ -393,12 +393,11 @@ ArrayExpress E-MTAB-8410.</p>
 <p>To load the reananlyzed example data set directly from GitHub, use
 the following code in R</p>
 <pre class="r"><code># Load Umethod
-library(Umethod)</code></pre>
-<pre><code>## Do you want to install missing dependencies? (yes/no):</code></pre>
-<pre class="r"><code>library(&quot;scCustomize&quot;)
+library(Umethod)
 library(cowplot)
 library(ggplot2)
 library(svMisc)
+library(Seurat)
 
 # Load the published data set (replace with the actual data loading code)
 rds_url &lt;- &quot;https://github.com/YanuvS-Dev/Umethod/raw/master/inst/extdata/ColonSinglecellDataLeesUmethodSubsampled10.rds&quot;
@@ -410,18 +409,17 @@ genes_list &lt;- FindUniqueMarkers(
     obj = seurat_Full,
     group_by = &quot;Celltype&quot;,
     method = &quot;none&quot;,
-    smallcluster = c(&quot;CAFelse&quot;, &quot;SmallElse&quot;),
-    progresstext = F)
+    smallcluster = c(&quot;CAFelse&quot;, &quot;SmallElse&quot;))
 
 # gene_list is the marker list ordered by score and cluster
 head(genes_list)</code></pre>
-<pre><code>##            Gene Cluster    Uscore  adj.p.value      P_in     P_out
-## S100P     S100P  Cancer 0.5463567 2.184539e-06 0.8105077 0.2641509
-## LCN2       LCN2  Cancer 0.5145713 7.177230e-06 0.7880756 0.2735043
-## ANXA3     ANXA3  Cancer 0.4887284 1.803291e-05 0.6511216 0.1623932
-## CEACAM6 CEACAM6  Cancer 0.4617251 4.520007e-05 0.7266824 0.2649573
-## ASCL2     ASCL2  Cancer 0.4550298 5.637563e-05 0.5832349 0.1282051
-## MAL2       MAL2  Cancer 0.4509430 6.442831e-05 0.8099174 0.3589744</code></pre>
+<pre><code>##               Gene        Cluster    Uscore  adj.p.value      P_in     P_out
+## ADAMDEC12 ADAMDEC1 Adamdec1 Fibro 0.7433797 1.083996e-09 0.9595960 0.2162162
+## HAPLN12     HAPLN1 Adamdec1 Fibro 0.5653907 1.277741e-06 0.6969697 0.1315789
+## CCL132       CCL13 Adamdec1 Fibro 0.4812454 2.083379e-05 0.5757576 0.0945122
+## FABP42       FABP4 Adamdec1 Fibro 0.4189723 1.312043e-04 0.6363636 0.2173913
+## APOE2         APOE Adamdec1 Fibro 0.3962264 2.450350e-04 1.0000000 0.6037736
+## SFTA1P2     SFTA1P Adamdec1 Fibro 0.3916084 2.773088e-04 0.5454545 0.1538462</code></pre>
 <pre class="r"><code># Choose thresholds 
 Uscore &lt;- 0.25
 p_in &lt;- 0.4
@@ -434,26 +432,26 @@ genesetshort &lt;- unlist(sapply(split(genes_list[genes_list$Uscore &gt; Uscore 
 genesetlong &lt;- unique(unlist(sapply(split(genes_list[genes_list$Uscore &gt; Uscore &amp; genes_list$P_in &gt; p_in&amp; genes_list$P_out &lt; p_out,],genes_list[genes_list$Uscore &gt; Uscore &amp; genes_list$P_in &gt; p_in&amp; genes_list$P_out &lt; p_out,]$Cluster),function(x){x[[1]][1:5]})))
 
 genesetlong</code></pre>
-<pre><code>##      Adamdec1.Fibro B.cells     CAF       Cancer    CAP.else Endothelial
+<pre><code>##      Adamdec1 Fibro B cells     CAF       Cancer    CAP else Endothelial
 ## [1,] &quot;ADAMDEC1&quot;     &quot;MS4A1&quot;     &quot;WNT2&quot;    &quot;S100P&quot;   &quot;KCNJ8&quot;  &quot;ECSCR.1&quot;  
 ## [2,] &quot;HAPLN1&quot;       &quot;BANK1&quot;     &quot;PODNL1&quot;  &quot;LCN2&quot;    &quot;HIGD1B&quot; &quot;PLVAP&quot;    
 ## [3,] &quot;CCL13&quot;        &quot;TNFRSF13C&quot; &quot;COL11A1&quot; &quot;ANXA3&quot;   &quot;ENPEP&quot;  &quot;VWF&quot;      
 ## [4,] &quot;FABP4&quot;        NA          &quot;COL10A1&quot; &quot;CEACAM6&quot; &quot;EGFLAM&quot; &quot;PCAT19&quot;   
 ## [5,] &quot;SFTA1P&quot;       NA          &quot;FAP&quot;     &quot;ASCL2&quot;   &quot;COL5A3&quot; &quot;CLDN5&quot;    
-##      Epithelial General.Fibro Macrofague Normal.Muscle Plasma     Sox6..Stroma
+##      Epithelial General Fibro Macrofague Normal Muscle Plasma     Sox6+ Stroma
 ## [1,] &quot;GUCA2A&quot;   &quot;OGN&quot;         &quot;TYROBP&quot;   &quot;PLN&quot;         &quot;MZB1&quot;     &quot;NSG1&quot;      
 ## [2,] &quot;CA2&quot;      &quot;PCOLCE2&quot;     &quot;FCER1G&quot;   &quot;RERGL&quot;       &quot;DERL3&quot;    &quot;VSTM2A&quot;    
 ## [3,] &quot;VSIG2&quot;    &quot;PI16&quot;        &quot;AIF1&quot;     &quot;C2orf40&quot;     &quot;TNFRSF17&quot; &quot;BMP5&quot;      
 ## [4,] &quot;MT1H&quot;     &quot;C1QTNF3&quot;     &quot;LST1&quot;     &quot;NTRK2&quot;       &quot;CD27&quot;     &quot;PDGFD&quot;     
 ## [5,] &quot;GUCA2B&quot;   &quot;SHISA3&quot;      &quot;IL1B&quot;     &quot;AMIGO2&quot;      &quot;FAM46C&quot;   &quot;ENHO&quot;      
-##      T.cells
+##      T-cells
 ## [1,] &quot;CD3D&quot; 
 ## [2,] &quot;CD3E&quot; 
 ## [3,] &quot;CD2&quot;  
 ## [4,] &quot;CD7&quot;  
 ## [5,] &quot;TRBC1&quot;</code></pre>
 <pre class="r"><code>#Order the cluster that had at least one marker that passed threshold, as you want them to be plotted.
-clusterorder&lt;- c(&quot;CAF&quot;,&quot;General.Fibro&quot;,&quot;Adamdec1.Fibro&quot;,&quot;Normal.Muscle&quot;,&quot;Sox6..Stroma&quot;,&quot;CAP.else&quot;,&quot;Endothelial&quot;,&quot;Macrofague&quot;,&quot;T.cells&quot;,&quot;B.cells&quot;,&quot;Plasma&quot;,&quot;Epithelial&quot;,&quot;Cancer&quot;)
+clusterorder&lt;- c(&quot;CAF&quot;,&quot;General Fibro&quot;,&quot;Adamdec1 Fibro&quot;,&quot;Normal Muscle&quot;,&quot;Sox6+ Stroma&quot;,&quot;CAP else&quot;,&quot;Endothelial&quot;,&quot;Macrofague&quot;,&quot;T-cells&quot;,&quot;B cells&quot;,&quot;Plasma&quot;,&quot;Epithelial&quot;,&quot;Cancer&quot;)
 # Ordering the clusters that had any umarkers from genesetlong for dotplot
 indclusters &lt;- rep(NA,dim(genesetlong)[2])
 for(i in 1:dim(genesetlong)[2]){indclusters[i] &lt;- which(colnames(genesetlong) == clusterorder[i])}
