@@ -22,7 +22,7 @@ CreateImageData <- function(bc_matrix, poaraq, markers, project = NULL, print.ta
 
   # Extract marker expression and format into dataframe
   marker_expr <- bc_matrix[rownames(bc_matrix) %in% markers, , drop = FALSE]
-  df <- as.data.frame(t(marker_expr))
+  df <- as.data.frame(Matrix::t(marker_expr))
   df$cell_id <- rownames(df)
 
   # Merge spatial metadata with expression data
