@@ -2,24 +2,33 @@
 % Please edit documentation in R/CreateImageData.R
 \name{CreateImageData}
 \alias{CreateImageData}
-\title{U-Method CreateImageData function}
+\title{U-Method: CreateImageData Function}
 \usage{
-CreateImageData(bc_matrix, poaraq, markers, project = NULL, print.table = F)
+CreateImageData(
+  bc_matrix,
+  poaraq,
+  markers,
+  project = NULL,
+  print.table = FALSE,
+  Signituretable = NULL
+)
 }
 \arguments{
-\item{bc_matrix}{10x filtered matrix, can be loaded by Read10X(".../Visium_HD__binned_outputsXum/filtered_feature_bc_matrix/"), X in (2,8,16).}
+\item{bc_matrix}{A 10x filtered gene expression matrix, loadable via Read10X(".../Visium_HD__binned_outputsXum/filtered_feature_bc_matrix/"). X can be 2, 8, or 16.}
 
-\item{poaraq}{poaraq file can be loaded by read_parquet(".../Visium_HD__binned_outputX2um/spatial/tissue_positions.parquet")}
+\item{poaraq}{A parquet file containing spatial barcode metadata, loadable via read_parquet(".../Visium_HD__binned_outputX2um/spatial/tissue_positions.parquet").}
 
-\item{markers}{marker list to plot on visium HD data}
+\item{markers}{A vector of marker gene names to visualize on Visium HD data.}
 
-\item{project}{name of the project passed to output Seurat object}
+\item{project}{A string specifying the project name for the Seurat object. Defaults to "Visium & U-Method Project" if NULL.}
 
-\item{print.table}{should the number of spots per marker be plotted}
+\item{print.table}{Logical; if TRUE, prints a table showing the number of spots per marker.}
+
+\item{Signituretable}{A table of marker names with cluster column names (genesetlong). Defaults to NULL.}
 }
 \value{
-Seurat object with all data on markers needed for downstream analysis
+A Seurat object containing expression data and spatial metadata for the selected markers.
 }
 \description{
-This function pulles the read count from the visium dataset for each spot for selected markers
+This function extracts read counts from the Visium HD dataset for each spatial spot and selected markers, integrating them into a Seurat object.
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/FindUniqueMarkers.R
 \name{FindUniqueMarkers}
 \alias{FindUniqueMarkers}
-\title{Find Unique Markers - U Method}
+\title{U-Method: Find Unique Markers}
 \usage{
 FindUniqueMarkers(
   obj,
@@ -17,28 +17,29 @@ FindUniqueMarkers(
 )
 }
 \arguments{
-\item{obj}{A Seurat object after clustering.}
+\item{obj}{A Seurat object with cluster assignments.}
 
-\item{group_by}{The cluster labels in the metadata of \code{obj}.}
+\item{group_by}{The metadata column containing cluster labels.}
 
-\item{p.threshold}{The p-value threshold for the U method. Defaults to a value of 0.05.}
+\item{p.threshold}{The adjusted p-value threshold for selecting unique markers. Default is 1.}
 
-\item{threshold}{The expression threshold above which a cell is considered positive for a gene. Default is 0.}
+\item{threshold}{The expression cutoff above which a gene is considered expressed in a cell. Default is 0.}
 
-\item{varfeatures}{The features (genes) to use in the analysis. By default, the 2000 most variable genes will be used unless specified otherwise. If NULL, the method uses the 2000 most variable genes.}
+\item{varfeatures}{A vector of genes to include in the analysis. Defaults to the 2000 most variable genes if NULL.}
 
-\item{smallcluster}{A vector of cluster names to exclude from the analysis. This is useful for omitting small mixed clusters.}
+\item{smallcluster}{A vector of cluster names to exclude, useful for omitting small or mixed clusters.}
 
-\item{method}{The p-value adjustment method. Defaults to "BH" (Benjamini-Hochberg). Set to "none" for raw p-values or choose other methods available in the \code{p.adjust} function.}
+\item{method}{P-value adjustment method. Defaults to "BH" (Benjamini-Hochberg). Other options follow \code{p.adjust} methods.}
 
-\item{P_in_thresh}{The minimum probability of expressing a gene inside the cluster for filtering the final results. Default keeps the full gene list.}
+\item{P_in_thresh}{Minimum probability of gene expression within a cluster for inclusion. Default is 0.}
 
-\item{P_out_thresh}{The maximum probability of expressing a gene in any other cluster for filtering the final results. Default keeps the full gene list.}
+\item{P_out_thresh}{Maximum probability of gene expression in other clusters for filtering. Default is 1.}
 }
 \value{
-A \code{data.frame} containing the most uniquely expressed genes per cluster that passed the filtering criteria.
+A \code{data.frame} listing uniquely expressed genes per cluster, filtered based on thresholds.
 }
 \description{
-This function identifies the most unique markers for each cluster in a Seurat object.
-It supports both numerical and character-based cluster labels. If the clusters are labeled as characters, set the \code{matchnames} parameter to \code{FALSE}.
+Identifies the most distinct markers for each cluster in a Seurat object using the U-method.
+Supports both numeric and character-based cluster labels. If cluster labels are character-based,
+set \code{matchnames} to \code{FALSE}.
 }
