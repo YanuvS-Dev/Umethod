@@ -156,17 +156,17 @@ distribution and expression patterns.
 ### Calculate Signature Scores
 
     # Plotting the signature expression of the top 5 markers or less if there arent 5 
-    SigniturebyCell <- as.data.frame(matrix(NA,ncol = dim(genesetlong)[2],nrow = nrow(seurat_object@meta.data)))
+    SignaturebyCell <- as.data.frame(matrix(NA,ncol = dim(genesetlong)[2],nrow = nrow(seurat_object@meta.data)))
     for(i in 1:dim(genesetlong)[2])
     {
       x <- genesetlong[,i]
       mdf <- seurat_object@meta.data[,colnames(seurat_object@meta.data) %in% x]
       if(is.null(dim(mdf)))
       {
-        SigniturebyCell[,i] <- mdf
+        SignaturebyCell[,i] <- mdf
         print(paste("Only used",colnames(seurat_object@meta.data)[colnames(seurat_object@meta.data) %in% x],"For",colnames(genesetlong)[i],sep = " "))
       }else{
-        SigniturebyCell[,i] <- apply(mdf,1,mean,na.rm = T) 
+        SignaturebyCell[,i] <- apply(mdf,1,mean,na.rm = T) 
       }
       print(paste("Finished average expression calculation of",colnames(genesetlong)[i]))
     }
@@ -185,10 +185,10 @@ distribution and expression patterns.
     ## [1] "Finished average expression calculation of Epithelial"
     ## [1] "Finished average expression calculation of Cancer"
 
-    names(SigniturebyCell) <- colnames(genesetlong)
-    colnames(SigniturebyCell) <- paste("Signiture",colnames(SigniturebyCell),sep = ".")
+    names(SignaturebyCell) <- colnames(genesetlong)
+    colnames(SignaturebyCell) <- paste("Signature",colnames(SignaturebyCell),sep = ".")
 
-    seurat_object <- AddMetaData(seurat_object,cbind(seurat_object@meta.data,SigniturebyCell))
+    seurat_object <- AddMetaData(seurat_object,cbind(seurat_object@meta.data,SignaturebyCell))
 
 ### Plot Spatial Expression
 
@@ -197,7 +197,7 @@ expression
 
 ## Prepare Data
 
-    beforemelt <- seurat_object@meta.data[,colnames(seurat_object@meta.data) %in% c("pxl_row_in_fullres","pxl_col_in_fullres",colnames(SigniturebyCell))]
+    beforemelt <- seurat_object@meta.data[,colnames(seurat_object@meta.data) %in% c("pxl_row_in_fullres","pxl_col_in_fullres",colnames(SignaturebyCell))]
     aftermelt <- melt(beforemelt, id.vars = c("pxl_row_in_fullres", "pxl_col_in_fullres"))
     names(aftermelt)[3] <- "Class"
     aftermelt$value <- ifelse(aftermelt$value == 0, NA, aftermelt$value)
@@ -207,8 +207,8 @@ expression
     g <- list()
     color_palette <- c("brown1", "turquoise1", "chartreuse", "magenta", "lightblue", "darkviolet", "#619CFF", "#7F7F7F", "darkolivegreen1", "orange", "ghostwhite", "#C4B239", "darkorange1")
 
-    for (i in colnames(SigniturebyCell)) {
-      index <- which(colnames(SigniturebyCell) == i)
+    for (i in colnames(SignaturebyCell)) {
+      index <- which(colnames(SignaturebyCell) == i)
       g[[index]] <- ggplot(aftermelt[aftermelt$Class == i & !is.na(aftermelt$value), ], 
                             aes(x = pxl_col_in_fullres, y = pxl_row_in_fullres, color = Class, alpha = value/max(value))) +
         geom_point(size = 0.01) +
