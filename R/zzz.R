@@ -1,5 +1,5 @@
 .onLoad <- function(libname, pkgname) {
-  required_packages <- c("stringdist", "cowplot", "ggplot2", "reshape2",
+  required_packages <- c("stringdist", "cowplot", "ggplot2", "reshape2","arrow",
                          "scales", "plotly", "lubridate", "Seurat", "svMisc", "Matrix")
 
   missing_packages <- required_packages[!sapply(required_packages, requireNamespace, quietly = TRUE)]

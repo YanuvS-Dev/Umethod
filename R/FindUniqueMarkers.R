@@ -3,7 +3,6 @@
 #'
 #' Identifies the most distinct markers for each cluster in a Seurat object using the U-method.
 #' Supports both numeric and character-based cluster labels. If cluster labels are character-based,
-#' set `matchnames` to `FALSE`.
 #'
 #' @param obj A Seurat object with cluster assignments.
 #' @param group_by The metadata column containing cluster labels.
@@ -12,7 +11,7 @@
 #' @param P_in_thresh Minimum probability of gene expression within a cluster for inclusion. Default is 0.
 #' @param P_out_thresh Maximum probability of gene expression in other clusters for filtering. Default is 1.
 #' @param varfeatures A vector of genes to include in the analysis. Defaults to the 2000 most variable genes if NULL.
-#' @param smallcluster A vector of cluster names to exclude, useful for omitting small or mixed clusters.
+#' @param omitCluster A vector of cluster names to exclude, useful for omitting small or mixed clusters.
 #' @param method P-value adjustment method. Defaults to "BH" (Benjamini-Hochberg). Other options follow `p.adjust` methods.
 #'
 #' @return A `data.frame` listing uniquely expressed genes per cluster, filtered based on thresholds.
@@ -25,7 +24,7 @@ FindUniqueMarkers <- function(obj,
                               P_in.thersh = 0,
                               P_out.thersh = 1,
                               varfeatures = NULL,
-                              smallcluster = NULL,
+                              omitCluster = NULL,
                               method = "BH")
 {
   # Determine expression matrix format
@@ -62,11 +61,11 @@ FindUniqueMarkers <- function(obj,
   rownames(percent_stats) <- varfeatureschoose
   colnames(percent_stats) <- clusters
 
-  if(is.null(smallcluster)){
+  if(is.null(omitCluster)){
     ind_column <- 1:length(clusters)
   }else
   {
-    ind_column <- c(1:length(clusters))[-which(colnames(percent_stats) %in% smallcluster)]
+    ind_column <- c(1:length(clusters))[-which(colnames(percent_stats) %in% omitCluster)]
   }
 
   # Compute U-scores, Pin, and Pout

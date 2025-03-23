@@ -12,7 +12,7 @@ FindUniqueMarkers(
   P_in.thersh = 0,
   P_out.thersh = 1,
   varfeatures = NULL,
-  smallcluster = NULL,
+  omitCluster = NULL,
   method = "BH"
 )
 }
@@ -27,7 +27,7 @@ FindUniqueMarkers(
 
 \item{varfeatures}{A vector of genes to include in the analysis. Defaults to the 2000 most variable genes if NULL.}
 
-\item{smallcluster}{A vector of cluster names to exclude, useful for omitting small or mixed clusters.}
+\item{omitCluster}{A vector of cluster names to exclude, useful for omitting small or mixed clusters.}
 
 \item{method}{P-value adjustment method. Defaults to "BH" (Benjamini-Hochberg). Other options follow \code{p.adjust} methods.}
 
@@ -41,5 +41,4 @@ A \code{data.frame} listing uniquely expressed genes per cluster, filtered based
 \description{
 Identifies the most distinct markers for each cluster in a Seurat object using the U-method.
 Supports both numeric and character-based cluster labels. If cluster labels are character-based,
-set \code{matchnames} to \code{FALSE}.
 }

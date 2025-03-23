@@ -25,11 +25,10 @@ CreateImageData <- function(bc_matrix, poaraq, markers, project = NULL, print.ta
   df <- as.data.frame(Matrix::t(marker_expr))
   df$cell_id <- rownames(df)
 
-  # Merge spatial metadata with expression data
-  cell_metadata <- poaraq %>%
-    filter(barcode %in% colnames(seurat_object)) %>%
-    rename(cell_id = barcode) %>%
-    left_join(df, by = "cell_id")
+  # Merge spatial metadata with expression data (Base R instead of dplyr)
+  cell_metadata <- poaraq[poaraq$barcode %in% colnames(seurat_object), ]  # Equivalent to filter()
+  colnames(cell_metadata)[colnames(cell_metadata) == "barcode"] <- "cell_id"  # Equivalent to rename()
+  cell_metadata <- merge(cell_metadata, df, by = "cell_id", all.x = TRUE)  # Equivalent to left_join()
 
   # Add metadata to Seurat object
   seurat_object <- AddMetaData(seurat_object, metadata = cell_metadata)
