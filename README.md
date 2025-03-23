@@ -23,8 +23,6 @@ To install **Umethod** from GitHub:
 The `FindUniqueMarkers` function identifies the most **unique markers**
 for each cluster in a Seurat object.
 
-    knitr::include_graphics("images/UmethodImage.png")
-
 ## Example Usage
 
 ### Reference Dataset
@@ -115,7 +113,7 @@ This example uses a **reanalyzed** dataset from:
 
 # Plotting the results of the top U markers for each cluster
 
-<img src="README_files/figure-markdown_strict/unnamed-chunk-4-1.png" width="100%" />
+<img src="README_files/figure-markdown_strict/unnamed-chunk-5-1.png" width="100%" />
 
 ## Visualizing Markers on Visium HD
 
@@ -221,9 +219,15 @@ patterns.
 
 ## Display Plots
 
-<img src="README_files/figure-markdown_strict/unnamed-chunk-9-1.png" width="100%" />
+<img src="README_files/figure-markdown_strict/unnamed-chunk-10-1.png" width="100%" />
 
-In normal samples CAF and CAPelse signatures are not expressed.
+## Notes on Signature Expression figure
+
+-   **Normal Samples:** CAF and CAPelse signatures are not expressed.
+-   **Tumor Samples:** Cancer signature expression differs from
+    Epithelial signature expression only in Tumor samples. Run this code
+    on Tumor samples from Oliveira, Michelli F., et al. manuscript for
+    examples.
 
 🚀 Now you’re ready to detect unique single-cell markers using the
 U-method!
