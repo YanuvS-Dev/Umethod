@@ -1,11 +1,11 @@
 ---
 title: "U method intall and run"
 author: "Yaniv Stein"
-date: "2025-23-02"
+date: "2025-03-23"
 output: html_document
 ---
 
-# Umethod: Identify Unique Markers in Single-Cell Data  
+# U-method: Identify Unique Markers in Single-Cell Data  
 
 **Umethod** is an R package designed to identify **unique markers** in single-cell datasets. It provides methods for finding the most distinct markers for each cluster in a **Seurat object** and visualizing them in **Visium HD spatial data**.
 
@@ -51,6 +51,7 @@ library(cowplot)
 library(ggplot2)
 library(svMisc)
 library(Seurat)
+library(reshape2)
 
 # Load the published data set (replace with the actual data loading code)
 rds_url <- "https://github.com/YanuvS-Dev/Umethod/raw/master/inst/extdata/ColonSinglecellDataLeesUmethodSubsampled10.rds"
@@ -207,4 +208,8 @@ for (i in colnames(SigniturebyCell)) {
 
 ```{r,fig.width=27, fig.height=14, out.width='100%', dpi=300,warning = FALSE, message = FALSE, echo=FALSE}
 plot_grid(g[[12]],g[[13]],g[[1]],g[[2]],g[[3]],g[[4]],g[[5]],g[[6]],g[[7]],g[[9]],g[[10]],g[[11]],ncol = 3)
-}
+```
+
+In normal samples CAF and CAPelse signatures are not expressed.
+
+🚀 Now you're ready to detect unique single-cell markers using the U-method!

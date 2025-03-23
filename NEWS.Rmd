@@ -1,14 +1,17 @@
 ---
 title: "NEWS"
 author: "Yaniv Stein"
-date: "2025-02-17"
+date: "2025-03-23"
 output: html_document
 ---
 
-# Umethod 1.0.0-beta (2025-02-17)
+# Umethod 1.0.0-beta (2025-03-23)
 
-* **Relese**
+* **Release**
 
+  New documentation for CreateImageData for signature plots in Visium HD data using ggplot2
+  
 * **Future Changes:**
-    * update with better descriptions for the functions
 
+Version 1.0.0 is coming to your R session real soon.
+Within this release will be new tests for different u-score hypothesis, new functions to plot Visium HD and other spatial expression data patterns.
