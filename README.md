@@ -23,6 +23,8 @@ To install **Umethod** from GitHub:
 The `FindUniqueMarkers` function identifies the most **unique markers**
 for each cluster in a Seurat object.
 
+<img src="images/UmethodImage.png" width="1567" />
+
 ## Example Usage
 
 ### Reference Dataset
@@ -88,18 +90,24 @@ This example uses a **reanalyzed** dataset from:
 
     genesetlong
 
-    ##      Adamdec1 Fibro B cells     CAF       Cancer    CAP else   Endothelial Epithelial General Fibro Macrofague Normal Muscle
-    ## [1,] "ADAMDEC1"     "MS4A1"     "INHBA"   "S100P"   "KCNJ8"    "ECSCR.1"   "MT1G"     "OGN"         "TYROBP"   "PLN"        
-    ## [2,] "HAPLN1"       "BANK1"     "CTHRC1"  "LCN2"    "HIGD1B"   "PLVAP"     "GUCA2A"   "PCOLCE2"     "FCER1G"   "RERGL"      
-    ## [3,] "CCL13"        "TNFRSF13C" "WNT2"    "ANXA3"   "ENPEP"    "VWF"       "CA2"      "PI16"        "AIF1"     "C2orf40"    
-    ## [4,] "FABP4"        "CD37"      "PODNL1"  "CEACAM6" "NDUFA4L2" "PCAT19"    "VSIG2"    "C1QTNF3"     "LST1"     "NTRK2"      
-    ## [5,] "APOE"         NA          "COL11A1" "ASCL2"   "PLXDC1"   "CLDN5"     "MT1H"     "SHISA3"      "IL1B"     "MYH11"      
-    ##      Plasma     Sox6+ Stroma T-cells
-    ## [1,] "MZB1"     "NSG1"       "CD3D" 
-    ## [2,] "DERL3"    "VSTM2A"     "CD3E" 
-    ## [3,] "TNFRSF17" "BMP5"       "CD2"  
-    ## [4,] "CD27"     "F3"         "CD7"  
-    ## [5,] "FAM46C"   "PDGFD"      "TRBC1"
+    ##      Adamdec1 Fibro B cells     CAF       Cancer    CAP else   Endothelial
+    ## [1,] "ADAMDEC1"     "MS4A1"     "INHBA"   "S100P"   "KCNJ8"    "ECSCR.1"  
+    ## [2,] "HAPLN1"       "BANK1"     "CTHRC1"  "LCN2"    "HIGD1B"   "PLVAP"    
+    ## [3,] "CCL13"        "TNFRSF13C" "WNT2"    "ANXA3"   "ENPEP"    "VWF"      
+    ## [4,] "FABP4"        "CD37"      "PODNL1"  "CEACAM6" "NDUFA4L2" "PCAT19"   
+    ## [5,] "APOE"         NA          "COL11A1" "ASCL2"   "PLXDC1"   "CLDN5"    
+    ##      Epithelial General Fibro Macrofague Normal Muscle Plasma     Sox6+ Stroma
+    ## [1,] "MT1G"     "OGN"         "TYROBP"   "PLN"         "MZB1"     "NSG1"      
+    ## [2,] "GUCA2A"   "PCOLCE2"     "FCER1G"   "RERGL"       "DERL3"    "VSTM2A"    
+    ## [3,] "CA2"      "PI16"        "AIF1"     "C2orf40"     "TNFRSF17" "BMP5"      
+    ## [4,] "VSIG2"    "C1QTNF3"     "LST1"     "NTRK2"       "CD27"     "F3"        
+    ## [5,] "MT1H"     "SHISA3"      "IL1B"     "MYH11"       "FAM46C"   "PDGFD"     
+    ##      T-cells
+    ## [1,] "CD3D" 
+    ## [2,] "CD3E" 
+    ## [3,] "CD2"  
+    ## [4,] "CD7"  
+    ## [5,] "TRBC1"
 
 ### Plotting Unique Markers
 
@@ -126,10 +134,12 @@ Oliveira, Michelli F., et al. (2024). Characterization of immune cell
 populations in the tumor microenvironment of colorectal cancer using
 high-definition spatial profiling. bioRxiv. \[DOI: 2024-06\]
 
-In this example, we focus on the Normal sample. However, we strongly
-encourage users to apply the U-Method to all five available samples to
-gain deeper insights into spatial marker distribution and expression
-patterns.
+In this example, we focus on one Normal sample and one Tumor sample.
+However, we strongly encourage users to apply the U-Method to all five
+available samples to gain deeper insights into spatial marker
+distribution and expression patterns.
+
+#### Normal adjacent sample - NAT5
 
     library(arrow)
     colon.data <- Read10X("C:/myGithub/Uemethod_Bigfiles/VisiumHDcolon/NAT5/8um/filtered_feature_bc_matrix/")
@@ -182,7 +192,8 @@ patterns.
 
 ### Plot Spatial Expression
 
-# Using ggplot to plot the results of the top 5 u-marker average expression
+Using ggplot to plot the results of the top 5 u-marker average
+expression
 
 ## Prepare Data
 
@@ -217,17 +228,19 @@ patterns.
         scale_alpha(guide = 'none')
     }
 
-## Display Plots
+## Display Plots - Patient 5 normal sample
 
 <img src="README_files/figure-markdown_strict/unnamed-chunk-10-1.png" width="100%" />
+
+## Display Plots - Patient 5 tumor sample
+
+<img src="README_files/figure-markdown_strict/unnamed-chunk-15-1.png" width="100%" />
 
 ## Notes on Signature Expression figure
 
 -   **Normal Samples:** CAF and CAPelse signatures are not expressed.
 -   **Tumor Samples:** Cancer signature expression differs from
-    Epithelial signature expression only in Tumor samples. Run this code
-    on Tumor samples from Oliveira, Michelli F., et al. manuscript for
-    examples.
+    Epithelial signature expression only in Tumor samples.
 
 🚀 Now you’re ready to detect unique single-cell markers using the
 U-method!
