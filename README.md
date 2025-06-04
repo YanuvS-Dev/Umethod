@@ -32,13 +32,13 @@ To install **U-method** from GitHub:
 
 ## Timing the U-method
 
-We include timing benchmarks to demonstrate just how fast the U-method
-runs — from identifying robust markers to generating spatial and
-single-cell plots. This pipeline is built to scale. **Timing Note:** All
-performance timings reported in this tutorial were measured on a **local
-laptop running RStudio**, not on a high-performance server or compute
-cluster. This reflects realistic, reproducible desktop usage and
-emphasizes the efficiency of the U-method pipeline.
+We include benchmark results to highlight the speed and efficiency of
+the U-method — from detecting robust markers to generating spatial and
+single-cell classifications.
+
+Thanks to its lightweight and scalable implementation, the U-method is
+ideally suited for integration into machine learning pipelines and
+large-scale data workflows.
 
 ## FindUniqueMarkers Algorithm
 
@@ -50,12 +50,15 @@ for each cluster in a Seurat object.
 ## 1. Load Example Data
 
     # Load the U-method package
-    devtools::load_all(".")
-    library(cowplot)
-    library(ggplot2)
-    library(svMisc)
+    library(Umethod)
     library(Seurat)
     library(reshape2)
+    library(scales)
+    library(Matrix)
+
+    # Optional - plotting results
+    library(cowplot)
+    library(ggplot2)
     library(arrow)
 
     # Load the published dataset
@@ -73,12 +76,30 @@ for each cluster in a Seurat object.
 
 ## 3. Plot Top U-Markers (UMAP, DotPlot, FeaturePlot)
 
-<img src="README_files/figure-markdown_strict/unnamed-chunk-7-1.png" width="100%" />
+    plot_grid(
+      plot_grid(
+        DimPlot(object = seurat_Full, reduction = "UMAP_on_harmony", pt.size = 0.5, group.by = "Celltype"),
+        DotPlot(seurat_Full, features = c(UmethodResults$gene_set), group.by = "Celltype", scale = FALSE) +
+          theme(axis.text.x = element_text(angle = 90, vjust = -0.0001)),
+        ncol = 1
+      ),
+      FeaturePlot(
+        object = seurat_Full,
+        features = UmethodResults$gene_set[1, ],
+        cols = c("gray", "blue"),
+        reduction = "UMAP_on_harmony",
+        ncol = 3,
+        order = TRUE
+      ),
+      ncol = 2
+    )
 
-    cat("Time to run U-method on single-cell and generate UMAP plots: ", round(difftime(Sys.time(), start_time, units = "secs"), 2), "seconds
+<img src="README_files/figure-markdown_strict/unnamed-chunk-5-1.png" width="100%" />
+
+    cat("Time to load the data, apply the U-method, and generate UMAP plots: ", round(difftime(Sys.time(), start_time, units = "secs"), 2), "seconds
     ")
 
-    ## Time to run U-method on single-cell and generate UMAP plots:  62.95 seconds
+    ## Time to load the data, apply the U-method, and generate UMAP plots:  18.67 seconds
 
 ## Visualizing Markers on Visium HD
 
@@ -89,8 +110,7 @@ metadata with high-resolution Visium HD spatial transcriptomic data. In
 this tutorial, we use two real colorectal cancer samples:
 
 -   **NAT5 (normal adjacent tissue)** — a healthy reference region.
--   **CRC5 (tumor tissue)** — a malignant region from the same cancer
-    type.
+-   **CRC5 (tumor tissue)** — a malignant region from the same patient.
 
 We use 8µm-binned versions of the data here due to GitHub storage
 constraints. However, the U-method is designed to work directly on
@@ -176,7 +196,7 @@ bioRxiv. DOI: 2024-06
     # Reorder plot list: put Epithelial and Cancer first (manually found positions)
     plot_grid(g[[12]], g[[13]], g[[1]], g[[2]], g[[3]], g[[4]], g[[5]], g[[7]], g[[8]], g[[9]], g[[10]],g[[11]], ncol = 3)
 
-<img src="README_files/figure-markdown_strict/unnamed-chunk-11-1.png" width="100%" />
+<img src="README_files/figure-markdown_strict/unnamed-chunk-9-1.png" width="100%" />
 
 ## 7. Load Visium HD Data — Tumor Sample (CRC5, 8µm)
 
@@ -191,7 +211,7 @@ bioRxiv. DOI: 2024-06
 
 ## 8. Compute Signature Scores for Tumor Sample
 
-    datainput_control <- UmethodSignatureMap(
+    datainput_crc <- UmethodSignatureMap(
       seurat_object = seurat_object,
       gene_set = UmethodResults$gene_set
     )
@@ -214,12 +234,12 @@ bioRxiv. DOI: 2024-06
 ## 9. Plot Spatial Signatures — Tumor Sample
 
     g <- list()
-    for (i in datainput_control$Classlist) {
-      index <- which(datainput_control$Classlist == i)
+    for (i in datainput_crc$Classlist) {
+      index <- which(datainput_crc$Classlist == i)
       g[[index]] <- ggplot(
-        datainput_control$signatureLong[
-          datainput_control$signatureLong$Class == i &
-            !is.na(datainput_control$signatureLong$value),
+        datainput_crc$signatureLong[
+          datainput_crc$signatureLong$Class == i &
+            !is.na(datainput_crc$signatureLong$value),
         ],
         aes(
           x = pxl_col_in_fullres,
@@ -231,7 +251,7 @@ bioRxiv. DOI: 2024-06
         geom_point(size = 1) +
         theme_void() +
         scale_y_reverse() +
-        scale_color_manual(values = datainput_control$signature_colors[index]) +
+        scale_color_manual(values = datainput_crc$signature_colors[index]) +
         theme(
           plot.background = element_rect(fill = "black"),
           legend.position = "right",
@@ -243,12 +263,12 @@ bioRxiv. DOI: 2024-06
     # Reorder plot list: put Epithelial and Cancer first (manually found positions)
     plot_grid(g[[12]], g[[13]], g[[1]], g[[2]], g[[3]], g[[4]], g[[5]], g[[7]], g[[8]], g[[9]], g[[10]],g[[11]], ncol = 3)
 
-<img src="README_files/figure-markdown_strict/unnamed-chunk-14-1.png" width="100%" />
+<img src="README_files/figure-markdown_strict/unnamed-chunk-12-1.png" width="100%" />
 
     cat("Total time to run U-method and render both Visium HD panels: ", round(difftime(Sys.time(), start_time, units = "secs"), 2), "seconds
     ")
 
-    ## Total time to run U-method and render both Visium HD panels:  1122.2 seconds
+    ## Total time to run U-method and render both Visium HD panels:  298.21 seconds
 
 ## Notes on Signature Expression
 

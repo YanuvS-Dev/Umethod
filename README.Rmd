@@ -37,9 +37,11 @@ library(Umethod)
 
 ## Timing the U-method
 
-We include timing benchmarks to demonstrate just how fast the U-method runs — 
-from identifying robust markers to generating spatial and single-cell plots. This pipeline is built to scale.
-**Timing Note:** All performance timings reported in this tutorial were measured on a **local laptop running RStudio**, not on a high-performance server or compute cluster. This reflects realistic, reproducible desktop usage and emphasizes the efficiency of the U-method pipeline.
+We include benchmark results to highlight the speed and efficiency of the U-method — 
+from detecting robust markers to generating spatial and single-cell classifications. 
+
+Thanks to its lightweight and scalable implementation, the U-method is ideally suited 
+for integration into machine learning pipelines and large-scale data workflows.
 
 ```{r setup-timer, include=FALSE}
 start_time <- Sys.time()
@@ -57,12 +59,15 @@ knitr::include_graphics("images/UmethodImage.png")
 
 ```{r, warning=FALSE, message=FALSE}
 # Load the U-method package
-devtools::load_all(".")
-library(cowplot)
-library(ggplot2)
-library(svMisc)
+library(Umethod)
 library(Seurat)
 library(reshape2)
+library(scales)
+library(Matrix)
+
+# Optional - plotting results
+library(cowplot)
+library(ggplot2)
 library(arrow)
 
 # Load the published dataset
@@ -83,7 +88,7 @@ UmethodResults <- FindUniqueMarkers(
 
 ## 3. Plot Top U-Markers (UMAP, DotPlot, FeaturePlot)
 
-```{r, fig.width=27, fig.height=14, out.width='100%', dpi=300, warning=FALSE, message=FALSE, echo=FALSE}
+```{r, fig.width=27, fig.height=14, out.width='100%', dpi=300, warning=FALSE, message=FALSE}
 plot_grid(
   plot_grid(
     DimPlot(object = seurat_Full, reduction = "UMAP_on_harmony", pt.size = 0.5, group.by = "Celltype"),
@@ -104,7 +109,7 @@ plot_grid(
 ```
 
 ```{r, echo=TRUE}
-cat("Time to run U-method on single-cell and generate UMAP plots: ", round(difftime(Sys.time(), start_time, units = "secs"), 2), "seconds
+cat("Time to load the data, apply the U-method, and generate UMAP plots: ", round(difftime(Sys.time(), start_time, units = "secs"), 2), "seconds
 ")
 ```
 
@@ -116,7 +121,7 @@ cat("Time to run U-method on single-cell and generate UMAP plots: ", round(difft
 To visualize marker expression spatially, the U-method integrates Seurat metadata with high-resolution Visium HD spatial transcriptomic data. In this tutorial, we use two real colorectal cancer samples:
 
 - **NAT5 (normal adjacent tissue)** — a healthy reference region.
-- **CRC5 (tumor tissue)** — a malignant region from the same cancer type.
+- **CRC5 (tumor tissue)** — a malignant region from the same patient.
 
 We use 8µm-binned versions of the data here due to GitHub storage constraints. However, the U-method is designed to work directly on full-resolution (2µm) Visium HD data, achieving >95% unique spot assignment.
 
@@ -204,7 +209,7 @@ seurat_object <- CreateImageData(
 ## 8. Compute Signature Scores for Tumor Sample
 
 ```{r, warning=FALSE, message=FALSE}
-datainput_control <- UmethodSignatureMap(
+datainput_crc <- UmethodSignatureMap(
   seurat_object = seurat_object,
   gene_set = UmethodResults$gene_set
 )
@@ -214,12 +219,12 @@ datainput_control <- UmethodSignatureMap(
 
 ```{r, warning=FALSE, message=FALSE, fig.width=27, fig.height=14, out.width='100%', dpi=300}
 g <- list()
-for (i in datainput_control$Classlist) {
-  index <- which(datainput_control$Classlist == i)
+for (i in datainput_crc$Classlist) {
+  index <- which(datainput_crc$Classlist == i)
   g[[index]] <- ggplot(
-    datainput_control$signatureLong[
-      datainput_control$signatureLong$Class == i &
-        !is.na(datainput_control$signatureLong$value),
+    datainput_crc$signatureLong[
+      datainput_crc$signatureLong$Class == i &
+        !is.na(datainput_crc$signatureLong$value),
     ],
     aes(
       x = pxl_col_in_fullres,
@@ -231,7 +236,7 @@ for (i in datainput_control$Classlist) {
     geom_point(size = 1) +
     theme_void() +
     scale_y_reverse() +
-    scale_color_manual(values = datainput_control$signature_colors[index]) +
+    scale_color_manual(values = datainput_crc$signature_colors[index]) +
     theme(
       plot.background = element_rect(fill = "black"),
       legend.position = "right",
