@@ -13,7 +13,9 @@ FindUniqueMarkers(
   P_out.thersh = 1,
   varfeatures = NULL,
   omitCluster = NULL,
-  method = "BH"
+  method = "none",
+  Uscore = 0,
+  n = 3
 )
 }
 \arguments{
@@ -21,24 +23,31 @@ FindUniqueMarkers(
 
 \item{group_by}{The metadata column containing cluster labels.}
 
-\item{p.threshold}{The adjusted p-value threshold for selecting unique markers. Default is 1.}
+\item{p.threshold}{The p-value or adjusted p-value threshold. Default is 1.}
 
 \item{threshold}{The expression cutoff above which a gene is considered expressed in a cell. Default is 0.}
+
+\item{P_in.thersh}{Minimum probability of gene expression within a cluster for inclusion. Default is 0.}
+
+\item{P_out.thersh}{Maximum probability of gene expression in other clusters for filtering. Default is 1.}
 
 \item{varfeatures}{A vector of genes to include in the analysis. Defaults to the 2000 most variable genes if NULL.}
 
 \item{omitCluster}{A vector of cluster names to exclude, useful for omitting small or mixed clusters.}
 
-\item{method}{P-value adjustment method. Defaults to "BH" (Benjamini-Hochberg). Other options follow \code{p.adjust} methods.}
+\item{method}{P-value adjustment method. Set to "none" for raw p-values. Default is "none".}
 
-\item{P_in_thresh}{Minimum probability of gene expression within a cluster for inclusion. Default is 0.}
+\item{Uscore}{Minimum U-score threshold for \code{gene_set}. Default is 0.}
 
-\item{P_out_thresh}{Maximum probability of gene expression in other clusters for filtering. Default is 1.}
+\item{n}{Number of genes per cluster to include in \code{gene_set}. Default is 3.}
 }
 \value{
-A \code{data.frame} listing uniquely expressed genes per cluster, filtered based on thresholds.
+A list with:
+\itemize{
+\item gene_list_long: long-form marker table (data.frame)
+\item gene_set: top \code{n} markers per cluster (matrix)
+}
 }
 \description{
 Identifies the most distinct markers for each cluster in a Seurat object using the U-method.
-Supports both numeric and character-based cluster labels. If cluster labels are character-based,
 }

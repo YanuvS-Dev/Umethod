@@ -5,30 +5,27 @@
 \title{U-Method: CreateImageData Function}
 \usage{
 CreateImageData(
-  bc_matrix,
+  counts_matrix,
   poaraq,
-  markers,
+  markers = NULL,
   project = NULL,
-  print.table = FALSE,
-  Signituretable = NULL
+  print.table = FALSE
 )
 }
 \arguments{
-\item{bc_matrix}{A 10x filtered gene expression matrix, loadable via Read10X(".../Visium_HD__binned_outputsXum/filtered_feature_bc_matrix/"). X can be 2, 8, or 16.}
+\item{counts_matrix}{A 10x filtered gene expression matrix, loadable via Read10X().}
 
-\item{poaraq}{A parquet file containing spatial barcode metadata, loadable via read_parquet(".../Visium_HD__binned_outputX2um/spatial/tissue_positions.parquet").}
+\item{poaraq}{A data.frame from tissue_positions.parquet with spatial metadata.}
 
-\item{markers}{A vector of marker gene names to visualize on Visium HD data.}
+\item{markers}{Optional vector of gene names to visualize. If NULL, no marker metadata is added.}
 
-\item{project}{A string specifying the project name for the Seurat object. Defaults to "Visium & U-Method Project" if NULL.}
+\item{project}{A string for the Seurat object project name. Default is "Visium & U-Method Project".}
 
-\item{print.table}{Logical; if TRUE, prints a table showing the number of spots per marker.}
-
-\item{Signituretable}{A table of marker names with cluster column names (genesetlong). Defaults to NULL.}
+\item{print.table}{Logical; if TRUE, prints a table of marker combinations per spot.}
 }
 \value{
-A Seurat object containing expression data and spatial metadata for the selected markers.
+A Seurat object with spatial metadata and optionally marker classifications.
 }
 \description{
-This function extracts read counts from the Visium HD dataset for each spatial spot and selected markers, integrating them into a Seurat object.
+Creates a Seurat object from Visium HD data, optionally integrating marker expression.
 }

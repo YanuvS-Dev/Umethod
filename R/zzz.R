@@ -1,10 +1,21 @@
 .onLoad <- function(libname, pkgname) {
-  required_packages <- c("stringdist", "cowplot", "ggplot2", "reshape2","arrow",
-                         "scales", "plotly", "lubridate", "Seurat", "svMisc", "Matrix")
+  # Must-have packages
+  required_packages <- c("Seurat", "Matrix", "reshape2", "scales")
 
-  missing_packages <- required_packages[!sapply(required_packages, requireNamespace, quietly = TRUE)]
+  # Optional but recommended for downstream usage (e.g., plotting or reading parquet)
+  optional_packages <- c("ggplot2", "cowplot", "arrow")
 
-  if (length(missing_packages) > 0) {
-    packageStartupMessage("Please install the following missing packages: ", paste(missing_packages, collapse = ", "))
+  # Check required
+  missing_required <- required_packages[!sapply(required_packages, requireNamespace, quietly = TRUE)]
+  if (length(missing_required) > 0) {
+    packageStartupMessage("The following packages are REQUIRED by Umethod but not installed: ",
+                          paste(missing_required, collapse = ", "))
+  }
+
+  # Check optional
+  missing_optional <- optional_packages[!sapply(optional_packages, requireNamespace, quietly = TRUE)]
+  if (length(missing_optional) > 0) {
+    packageStartupMessage("Optional packages missing (used for plotting or file I/O): ",
+                          paste(missing_optional, collapse = ", "))
   }
 }

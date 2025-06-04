@@ -1,26 +1,24 @@
 Package: Umethod
 Type: Package
-Title: Unique Marker Detection in Single Cell Seurat Object after Clustering
+Title: Unique Marker Detection in Single-Cell Seurat Objects After Clustering
 Version: 0.9.0
 Authors@R: 
-    person("Yaniv", "Stein", , "yanuv.stein@gmail.com", role = c("aut", "cre"),
+    person("Yaniv", "Stein", email = "yanuv.stein@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0331-772X"))
-Description: Provides functions for detecting unique markers in single-cell Seurat objects after clustering
-License: GPL (>= 3)
+Description: Provides functions for detecting unique markers in single-cell Seurat objects after clustering. 
+    Includes spatial integration and classification tools for Visium HD data using U-score based statistics.
+License: GPL-3
 Depends: 
     R (>= 3.6.1)
 Imports:
     Seurat,
     Matrix,
-    dplyr,
-    ggplot2,
-    stringdist,
-    cowplot,
     reshape2,
-    scales,
-    plotly,
-    lubridate,
-    svMisc
+    scales
+Suggests:
+    ggplot2,
+    cowplot,
+    arrow
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
