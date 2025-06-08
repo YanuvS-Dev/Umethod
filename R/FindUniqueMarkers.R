@@ -121,7 +121,9 @@ FindUniqueMarkers <- function(obj,
 
   gene_split <- split(gene_set_table, gene_set_table$Cluster)
   gene_set <- do.call(cbind, lapply(gene_split, function(df) {
-    head(df$Gene, n)
+    genes <- head(df$Gene, n)
+    length(genes) <- n  # This pads with NA if length < n
+    return(genes)
   }))
 
   return(list(
