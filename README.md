@@ -80,7 +80,7 @@ seurat_Full <- readRDS(url(rds_url, "rb"))
 UmethodResults <- FindUniqueMarkers(
   obj = seurat_Full,
   group_by = "Celltype",
-  method = "BH",
+  Uscore = 0.2,
   omitCluster = c("CAF else", "Small Else")
 )
 ```
@@ -114,7 +114,7 @@ cat("Time to load the data, apply the U-method, and generate UMAP plots: ", roun
 ")
 ```
 
-    ## Time to load the data, apply the U-method, and generate UMAP plots:  33.33 seconds
+    ## Time to load the data, apply the U-method, and generate UMAP plots:  40.63 seconds
 
 ## Visualizing Markers on Visium HD
 
@@ -297,7 +297,7 @@ cat("Total time to run U-method and render both Visium HD panels: ", round(difft
 ")
 ```
 
-    ## Total time to run U-method and render both Visium HD panels:  535.14 seconds
+    ## Total time to run U-method and render both Visium HD panels:  341.5 seconds
 
 ## Notes on Signature Expression
 
