@@ -9,12 +9,6 @@
    </url>
 
    <url>
-      <loc>https://yanuvs-dev.github.io/Umethod/benchmark-reports.html</loc>
-      <changefreq>weekly</changefreq>
-      <priority>0.8</priority>
-   </url>
-
-   <url>
       <loc>https://yanuvs-dev.github.io/Umethod/U-method-report-evaluating-marker-stability-in-small-single-cell-populations.html</loc>
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>
