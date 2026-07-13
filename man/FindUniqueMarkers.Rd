@@ -7,6 +7,7 @@
 FindUniqueMarkers(
   obj,
   group_by,
+  assay = "RNA",
   p.threshold = 1,
   threshold = 0,
   P_in.thersh = 0,
@@ -23,6 +24,8 @@ FindUniqueMarkers(
 
 \item{group_by}{The metadata column containing cluster labels.}
 
+\item{assay}{Name of the assay to use for marker detection. Default is "RNA".}
+
 \item{p.threshold}{The p-value or adjusted p-value threshold. Default is 1.}
 
 \item{threshold}{The expression cutoff above which a gene is considered expressed in a cell. Default is 0.}
@@ -31,7 +34,7 @@ FindUniqueMarkers(
 
 \item{P_out.thersh}{Maximum probability of gene expression in other clusters for filtering. Default is 1.}
 
-\item{varfeatures}{A vector of genes to include in the analysis. Defaults to the 2000 most variable genes if NULL.}
+\item{varfeatures}{A vector of genes to include in the analysis. If NULL, all genes in the selected assay are used.}
 
 \item{omitCluster}{A vector of cluster names to exclude, useful for omitting small or mixed clusters.}
 

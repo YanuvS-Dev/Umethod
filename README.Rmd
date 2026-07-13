@@ -75,14 +75,18 @@ rds_url <- "https://github.com/YanuvS-Dev/Umethod/raw/master/inst/extdata/ColonS
 seurat_Full <- readRDS(url(rds_url, "rb"))
 ```
 
+```{r, warning=FALSE, message=FALSE,echo = F}
+levels(seurat_Full$Celltype)[c(5,7,9,11,15)] <- c("Sox6+ Fibro","CAF else","Macrophage","B-cells","Small Else")
+```
+
 ## 2. Identify Unique Markers
 
 ```{r, warning=FALSE, message=FALSE}
 UmethodResults <- FindUniqueMarkers(
   obj = seurat_Full,
   group_by = "Celltype",
-  method = "BH",
-  omitCluster = c("CAFelse", "SmallElse")
+  Uscore = 0.2,
+  omitCluster = c("CAF else", "Small Else")
 )
 ```
 
@@ -256,9 +260,32 @@ cat("Total time to run U-method and render both Visium HD panels: ", round(difft
 
 ## Notes on Signature Expression
 
-- **Normal Samples:** CAF signature is not expressed.
-- **Tumor Samples:** Cancer signature expression becomes distinct from Epithelial only in tumor tissue.
+- **Normal Samples:** CAF signatures are typically absent.
+- **Tumor Samples:** Cancer signatures become distinct from Epithelial only in tumor tissue.
 - The U-method enables robust class detection with minimal preprocessing power and time.
+- The U-method enables robust cluster-specific marker detection with minimal preprocessing, low computational cost, and fast runtime.
+
+
+## Guidelines for Use
+
+- Apply FindUniqueMarkers() on a clustered Seurat object to detect uniquely expressed genes (U-markers).
+
+- Start by running the U-method with default parameters (no filters). This provides a first look at all clusters.
+[Clusters with no obvious U-markers may represent mixed cell populations or potential misclustering. The U-method can serve as a simple goodness-of-fit check for the clustering]
+
+- For standard marker detection, rerun with a U-score threshold of 0.2 (as used in the manuscript).
+
+- If needed, increase the threshold or apply additional filters to tighten marker selection, and omit ambiguous clusters from the background before reintegration.
+
+- visualization of the results: Dot plots are generated with raw (unscaled) expression.
+
+- For spatial data:
+
+  - Build a Seurat object with CreateImageData().
+
+  - Project signatures and assign clusters with UmethodSignatureMap().
+
+
 
 ## Citation
 

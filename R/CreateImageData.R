@@ -17,7 +17,7 @@ CreateImageData <- function(counts_matrix,
                             print.table = FALSE) {
 
   # Create base Seurat object
-  seurat_object <- CreateSeuratObject(
+  seurat_object <- Seurat::CreateSeuratObject(
     counts = counts_matrix,
     assay = "Spatial",
     project = ifelse(is.null(project), "Visium & U-Method Project", project)
@@ -58,7 +58,7 @@ CreateImageData <- function(counts_matrix,
       rownames(cell_metadata) <- cell_metadata$cell_id
 
       # Add all metadata
-      seurat_object <- AddMetaData(seurat_object, metadata = cell_metadata)
+      seurat_object <- Seurat::AddMetaData(seurat_object, metadata = cell_metadata)
 
       # Marker-based classification
       seurat_object$Class <- apply(cell_metadata[, markers, drop = FALSE], 1, function(x) {
