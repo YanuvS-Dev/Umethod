@@ -1,12 +1,13 @@
 Package: Umethod
 Type: Package
 Title: Unique Marker Detection in Single-Cell Seurat Objects After Clustering
-Version: 0.9.0
+Version: 0.9.1
 Authors@R: 
     person("Yaniv", "Stein", email = "yanuv.stein@gmail.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-0331-772X"))
-Description: Provides functions for detecting unique markers in single-cell Seurat objects after clustering. 
-    Includes spatial integration and classification tools for Visium HD data using U-score based statistics.
+Description: Provides functions for detecting unique markers in clustered single-cell Seurat objects using the U-method.
+    Includes tools for spatial integration, visualization, and classification
+    of Visium HD spatial transcriptomics data using U-score based statistics.
 License: GPL-3
 Depends: 
     R (>= 3.6.1)
